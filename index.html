@@ -835,6 +835,10 @@
 
     // Checkup priorities for staggered scheduling when no date is provided
     // Lower number = higher priority (scheduled sooner)
+    // Priority represents months from today (priority 1 = 1 month, priority 2 = 2 months, etc.)
+    const DEFAULT_PRIORITY = 3; // Default priority for checkups not in the priority list
+    const CUSTOM_CHECKUP_BASE_PRIORITY = 3; // Starting priority for custom checkups
+    
     const checkupPriorities = {
       'gp-checkup': 1,           // General practitioner - highest priority
       'dental': 1,               // Dental care - also very important
@@ -1087,7 +1091,7 @@
 
         if (!lastDate || longerAgo) {
           // Stagger appointments based on priority
-          const priority = checkupPriorities[checkup.id] || 3; // Default to priority 3 if not defined
+          const priority = checkupPriorities[checkup.id] || DEFAULT_PRIORITY;
           nextDate = new Date();
           nextDate.setMonth(nextDate.getMonth() + priority);
 
@@ -1148,9 +1152,9 @@
           nextDate = new Date(checkup.lastDate);
           nextDate.setMonth(nextDate.getMonth() + checkup.interval);
         } else {
-          // Stagger custom checkups starting from priority 3 (month 3+)
+          // Stagger custom checkups starting from CUSTOM_CHECKUP_BASE_PRIORITY
           nextDate = new Date();
-          nextDate.setMonth(nextDate.getMonth() + 3 + index);
+          nextDate.setMonth(nextDate.getMonth() + CUSTOM_CHECKUP_BASE_PRIORITY + index);
           description += ' (erstmalig)';
         }
 
