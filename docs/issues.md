@@ -153,4 +153,33 @@
 
 **Phase 3 Gesamt-Status:** ✅ Abgeschlossen
 
+---
+
+### Test-Session 4: 2026-01-04 - Phase 4 Checkup Definitions and Filtering
+
+#### Phase 4.1: Checkup Definitions ✅
+- [x] checkupDefinitions Object existiert
+- [x] Male checkups: 9 Einträge (gp-checkup, colonoscopy, stool-test, skin-screening, prostate-dre, psa-test, eye-exam, cardio-extended, dental)
+- [x] Female checkups: 12 Einträge (zusätzlich: gynecological, hpv-test, mammography, breast-ultrasound, osteoporosis)
+- [x] Alle Checkups haben korrekte Struktur (id, name, intervals{gkv, pkv, recommended}, description, minAge, optional maxAge)
+- [x] Intervals korrekt: gkv/pkv/recommended in Monaten, null = nicht abgedeckt
+**Status:** Alle Tests bestanden
+
+#### Phase 4.2: Age-Based Filtering Logic ✅
+- [x] Filter mit Alter 25, male: 2 current (gp-checkup, dental), 7 future
+- [x] Filter mit Alter 52, male: 9 current (alle), 0 future
+- [x] Filter mit Alter 65, female: 12 current (inkl. mammography)
+- [x] Filter mit Alter 75, female: 11 current (OHNE mammography wegen maxAge 69)
+- [x] maxAge-Logic funktioniert korrekt (mammography nur bis 69 Jahre)
+- [x] Future checkups werden korrekt identifiziert (age < minAge)
+**Status:** Alle Tests bestanden
+
+**Testfälle:**
+- Age 25 male: Nur Basis-Checks (GP, Dental), alle anderen in Zukunft
+- Age 52 male: Alle 9 männlichen Checkups aktuell
+- Age 65 female: Alle 12 weiblichen Checkups inkl. Mammographie
+- Age 75 female: 11 Checkups, Mammographie ausgeschlossen (maxAge)
+
+**Phase 4 Gesamt-Status:** ✅ Abgeschlossen
+
 *(Weitere Tests werden während der Implementierung ergänzt)*

@@ -499,6 +499,163 @@
 
     let calendarEvents = [];
 
+    // ===== Checkup Definitions =====
+
+    const checkupDefinitions = {
+      male: [
+        {
+          id: 'gp-checkup',
+          name: 'Hausarzt Check-up',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Blutdruck, Cholesterin, Blutzucker, Leberwerte, Nierenwerte',
+          minAge: 18
+        },
+        {
+          id: 'colonoscopy',
+          name: 'Darmspiegelung',
+          intervals: { gkv: 120, pkv: 60, recommended: 96 },
+          description: 'Darmkrebsvorsorge',
+          minAge: 50
+        },
+        {
+          id: 'stool-test',
+          name: 'Immunologischer Stuhltest',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Alternative zur Darmspiegelung',
+          minAge: 50
+        },
+        {
+          id: 'skin-screening',
+          name: 'Hautkrebs-Screening',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Ganzkörperuntersuchung beim Hautarzt',
+          minAge: 35
+        },
+        {
+          id: 'prostate-dre',
+          name: 'Prostata-Untersuchung (DRU)',
+          intervals: { gkv: 12, pkv: 12, recommended: 12 },
+          description: 'Urologische Untersuchung',
+          minAge: 45
+        },
+        {
+          id: 'psa-test',
+          name: 'PSA-Test',
+          intervals: { gkv: null, pkv: 12, recommended: 12 },
+          description: 'Bluttest zur Prostatakrebs-Früherkennung (GKV Selbstzahler)',
+          minAge: 45
+        },
+        {
+          id: 'eye-exam',
+          name: 'Augenuntersuchung',
+          intervals: { gkv: 24, pkv: 12, recommended: 24 },
+          description: 'Glaukom-Screening, Netzhautuntersuchung',
+          minAge: 40
+        },
+        {
+          id: 'cardio-extended',
+          name: 'Erweiterter Herz-Kreislauf-Check',
+          intervals: { gkv: null, pkv: 24, recommended: 24 },
+          description: 'EKG, Belastungs-EKG, Herz-Ultraschall (PKV)',
+          minAge: 50
+        },
+        {
+          id: 'dental',
+          name: 'Zahnvorsorge',
+          intervals: { gkv: 6, pkv: 6, recommended: 6 },
+          description: 'Professionelle Zahnreinigung',
+          minAge: 18
+        }
+      ],
+      female: [
+        {
+          id: 'gp-checkup',
+          name: 'Hausarzt Check-up',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Blutdruck, Cholesterin, Blutzucker, Leberwerte, Nierenwerte',
+          minAge: 18
+        },
+        {
+          id: 'colonoscopy',
+          name: 'Darmspiegelung',
+          intervals: { gkv: 120, pkv: 60, recommended: 96 },
+          description: 'Darmkrebsvorsorge',
+          minAge: 50
+        },
+        {
+          id: 'stool-test',
+          name: 'Immunologischer Stuhltest',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Alternative zur Darmspiegelung',
+          minAge: 50
+        },
+        {
+          id: 'skin-screening',
+          name: 'Hautkrebs-Screening',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Ganzkörperuntersuchung beim Hautarzt',
+          minAge: 35
+        },
+        {
+          id: 'gynecological',
+          name: 'Gynäkologische Untersuchung',
+          intervals: { gkv: 12, pkv: 12, recommended: 12 },
+          description: 'Gebärmutterhalskrebs-Früherkennung',
+          minAge: 20
+        },
+        {
+          id: 'hpv-test',
+          name: 'HPV-Test',
+          intervals: { gkv: 60, pkv: 36, recommended: 36 },
+          description: 'Gebärmutterhalskrebs-Früherkennung',
+          minAge: 35
+        },
+        {
+          id: 'mammography',
+          name: 'Mammographie',
+          intervals: { gkv: 24, pkv: 24, recommended: 24 },
+          description: 'Brustkrebsvorsorge',
+          minAge: 50,
+          maxAge: 69
+        },
+        {
+          id: 'breast-ultrasound',
+          name: 'Brust-Ultraschall',
+          intervals: { gkv: null, pkv: 12, recommended: 12 },
+          description: 'Ergänzung zur Mammographie (PKV/Selbstzahler)',
+          minAge: 40
+        },
+        {
+          id: 'eye-exam',
+          name: 'Augenuntersuchung',
+          intervals: { gkv: 24, pkv: 12, recommended: 24 },
+          description: 'Glaukom-Screening, Netzhautuntersuchung',
+          minAge: 40
+        },
+        {
+          id: 'cardio-extended',
+          name: 'Erweiterter Herz-Kreislauf-Check',
+          intervals: { gkv: null, pkv: 24, recommended: 24 },
+          description: 'EKG, Belastungs-EKG, Herz-Ultraschall (PKV)',
+          minAge: 50
+        },
+        {
+          id: 'osteoporosis',
+          name: 'Osteoporose-Screening',
+          intervals: { gkv: null, pkv: 24, recommended: 24 },
+          description: 'Knochendichtemessung (PKV/Selbstzahler)',
+          minAge: 50
+        },
+        {
+          id: 'dental',
+          name: 'Zahnvorsorge',
+          intervals: { gkv: 6, pkv: 6, recommended: 6 },
+          description: 'Professionelle Zahnreinigung',
+          minAge: 18
+        }
+      ]
+    };
+
     // ===== Navigation Functions =====
 
     function showStep(stepNumber) {
@@ -552,6 +709,37 @@
 
     function goToStep3() {
       showStep(3);
+    }
+
+    // ===== Checkup Filtering Functions =====
+
+    function getCheckupsForUser() {
+      // Get checkups based on gender
+      const checkups = checkupDefinitions[userData.gender] || [];
+      return checkups;
+    }
+
+    function filterCheckupsByAge() {
+      const checkups = getCheckupsForUser();
+      const age = userData.age;
+
+      const current = [];
+      const future = [];
+
+      checkups.forEach(checkup => {
+        // Check if currently applicable
+        const isOldEnough = age >= checkup.minAge;
+        const isTooOld = checkup.maxAge && age > checkup.maxAge;
+
+        if (isOldEnough && !isTooOld) {
+          current.push(checkup);
+        } else if (!isOldEnough) {
+          future.push(checkup);
+        }
+        // If too old (maxAge exceeded), don't include at all
+      });
+
+      return { current, future };
     }
 
     // ===== Validation Functions =====
