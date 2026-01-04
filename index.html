@@ -102,6 +102,148 @@
       color: var(--text-muted);
     }
 
+    /* Progress Indicator */
+    .progress {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .progress-circle {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background-color: var(--border);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      transition: all 300ms ease;
+    }
+
+    .progress-step.active .progress-circle {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .progress-step.completed .progress-circle {
+      background-color: var(--primary-light);
+      color: white;
+    }
+
+    .progress-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .progress-step.active .progress-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .progress-line {
+      width: 3rem;
+      height: 2px;
+      background-color: var(--border);
+    }
+
+    .progress-step.completed + .progress-line {
+      background-color: var(--primary-light);
+    }
+
+    /* Step Container */
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+      animation: fadeIn 300ms ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(1rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-content {
+      background-color: var(--card);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 2rem;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      font-family: 'Karla', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 300ms ease;
+      min-height: 44px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #d67d57;
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: var(--primary);
+      color: white;
+    }
+
     /* Utility Classes */
     .hidden {
       display: none;
@@ -120,6 +262,34 @@
       .container {
         padding: 1.5rem 1rem;
       }
+
+      .progress {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .progress-line {
+        width: 2px;
+        height: 2rem;
+        transform: rotate(90deg);
+      }
+
+      .progress-step {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .step-content {
+        padding: 1.5rem;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -132,8 +302,59 @@
   </header>
 
   <main class="container">
-    <!-- Application content will go here -->
-    <p>Willkommen beim Gesundheitsvorsorge Planer</p>
+    <!-- Progress Indicator -->
+    <div class="progress">
+      <div class="progress-step active" id="progress-step-1">
+        <div class="progress-circle">1</div>
+        <span class="progress-label">Basisdaten</span>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step" id="progress-step-2">
+        <div class="progress-circle">2</div>
+        <span class="progress-label">Vorsorge</span>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step" id="progress-step-3">
+        <div class="progress-circle">3</div>
+        <span class="progress-label">Übersicht</span>
+      </div>
+    </div>
+
+    <!-- Step 1: Basic Information -->
+    <div class="step active" id="step-1">
+      <div class="step-content">
+        <h2>Schritt 1: Basisdaten</h2>
+        <p>Bitte geben Sie Ihre persönlichen Informationen ein.</p>
+      </div>
+      <div class="button-group">
+        <button class="btn-secondary" id="btn-restart">Neu starten</button>
+        <button class="btn-primary" id="btn-next-1">Weiter</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Checkup Configuration -->
+    <div class="step" id="step-2">
+      <div class="step-content">
+        <h2>Schritt 2: Vorsorgeuntersuchungen</h2>
+        <p>Konfigurieren Sie Ihre Vorsorgeuntersuchungen.</p>
+      </div>
+      <div class="button-group">
+        <button class="btn-secondary" id="btn-back-2">Zurück</button>
+        <button class="btn-primary" id="btn-next-2">Weiter</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Summary & Download -->
+    <div class="step" id="step-3">
+      <div class="step-content">
+        <h2>Schritt 3: Zusammenfassung</h2>
+        <p>Ihre Termine im Überblick.</p>
+      </div>
+      <div class="button-group">
+        <button class="btn-secondary" id="btn-back-3">Zurück</button>
+        <button class="btn-primary" id="btn-download">Kalender herunterladen</button>
+      </div>
+    </div>
   </main>
 
   <footer>
@@ -160,8 +381,98 @@
 
     let calendarEvents = [];
 
-    // Initialize
-    console.log('Gesundheitsvorsorge Planer initialisiert');
+    // ===== Navigation Functions =====
+
+    function showStep(stepNumber) {
+      // Hide all steps
+      document.querySelectorAll('.step').forEach(step => {
+        step.classList.remove('active');
+      });
+
+      // Show requested step
+      const targetStep = document.getElementById(`step-${stepNumber}`);
+      if (targetStep) {
+        targetStep.classList.add('active');
+      }
+
+      // Update progress indicator
+      updateProgress(stepNumber);
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateProgress(stepNumber) {
+      // Update progress steps
+      for (let i = 1; i <= 3; i++) {
+        const progressStep = document.getElementById(`progress-step-${i}`);
+        if (!progressStep) continue;
+
+        if (i < stepNumber) {
+          progressStep.classList.add('completed');
+          progressStep.classList.remove('active');
+        } else if (i === stepNumber) {
+          progressStep.classList.add('active');
+          progressStep.classList.remove('completed');
+        } else {
+          progressStep.classList.remove('active', 'completed');
+        }
+      }
+    }
+
+    function goToStep1() {
+      showStep(1);
+    }
+
+    function goToStep2() {
+      showStep(2);
+    }
+
+    function goToStep3() {
+      showStep(3);
+    }
+
+    function restart() {
+      // Reset user data
+      userData = {
+        gender: null,
+        birthYear: null,
+        age: null,
+        insuranceType: null,
+        checkups: {},
+        enabledCheckups: {},
+        customCheckups: []
+      };
+
+      // Reset calendar events
+      calendarEvents = [];
+
+      // Go back to step 1
+      goToStep1();
+
+      console.log('Application restarted');
+    }
+
+    // ===== Event Listeners =====
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Step 1 buttons
+      document.getElementById('btn-next-1').addEventListener('click', goToStep2);
+      document.getElementById('btn-restart').addEventListener('click', restart);
+
+      // Step 2 buttons
+      document.getElementById('btn-back-2').addEventListener('click', goToStep1);
+      document.getElementById('btn-next-2').addEventListener('click', goToStep3);
+
+      // Step 3 buttons
+      document.getElementById('btn-back-3').addEventListener('click', goToStep2);
+      document.getElementById('btn-download').addEventListener('click', function() {
+        console.log('Download clicked - ICS generation not yet implemented');
+      });
+
+      console.log('Gesundheitsvorsorge Planer initialisiert');
+    });
   </script>
 </body>
 </html>

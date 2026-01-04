@@ -90,4 +90,33 @@
 
 **Phase 1 Gesamt-Status:** ✅ Abgeschlossen
 
+---
+
+### Test-Session 2: 2026-01-04 - Phase 2 Step Navigation System
+
+#### Phase 2.1: HTML for 3 Steps ✅
+- [x] Step 1 container existiert im DOM
+- [x] Step 2 container existiert im DOM
+- [x] Step 3 container existiert im DOM
+- [x] Alle Buttons vorhanden (Next, Back, Restart, Download)
+- [x] Progress Indicator mit 3 Steps vorhanden
+- [x] Step 1 ist initial aktiv, Steps 2+3 sind versteckt
+**Status:** Alle Tests bestanden
+
+#### Phase 2.2: Navigation Logic ✅
+- [x] Click "Weiter" in Step 1 → navigiert zu Step 2
+- [x] Step 2 wird angezeigt, Step 1 wird versteckt
+- [x] Progress Indicator: Step 1 = completed, Step 2 = active
+- [x] Click "Zurück" in Step 2 → navigiert zu Step 1
+- [x] Click "Weiter" in Step 2 → navigiert zu Step 3
+- [x] Progress Indicator: Step 1+2 = completed, Step 3 = active
+- [x] Click "Zurück" in Step 3 → navigiert zu Step 2
+- [x] Restart-Funktion: userData wird zurückgesetzt (alle Felder null/leer)
+- [x] Restart-Funktion: calendarEvents Array wird geleert
+- [x] Restart-Funktion: Navigation zu Step 1
+- [x] Progress Indicator wird korrekt zurückgesetzt
+**Status:** Alle Tests bestanden
+
+**Phase 2 Gesamt-Status:** ✅ Abgeschlossen
+
 *(Weitere Tests werden während der Implementierung ergänzt)*
