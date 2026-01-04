@@ -211,4 +211,68 @@
 
 **Phase 5 Gesamt-Status:** ✅ Abgeschlossen
 
-*(Weitere Tests werden während der Implementierung ergänzt)*
+---
+
+### Test-Session 6: 2026-01-04 - Phase 6 Calendar Generation Logic
+
+#### Phase 6.1-6.2: Date Calculation and Calendar Generation ✅
+- [x] generateCalendar() function exists and executes
+- [x] Calendar events array populated with correct number of events
+- [x] Events sorted by date chronologically
+- [x] Date calculation for current checkups: lastDate + interval months
+- [x] Date calculation for "länger her": 1 month from now
+- [x] Date calculation for future checkups: current date + (minAge - currentAge) years
+- [x] Custom checkups included in calendar
+- [x] formatDateGerman() formats dates correctly (DD. Month YYYY)
+- [x] formatDateICS() formats dates correctly (YYYYMMDD)
+- [x] generateICSFile() creates RFC 5545 compliant structure
+- [x] ICS includes VCALENDAR wrapper
+- [x] ICS includes VEVENT for each checkup
+- [x] ICS includes 7-day reminders (TRIGGER:-P7D)
+- [x] downloadICS() triggers file download
+
+**Status:** Alle Tests bestanden
+
+**Phase 6 Gesamt-Status:** ✅ Abgeschlossen
+
+---
+
+### Test-Session 7: 2026-01-04 - Phase 7 Step 3 Summary & Download
+
+#### Phase 7.1: Summary Display ✅
+- [x] Summary section displays correct user data
+- [x] Gender displayed correctly (Männlich/Weiblich)
+- [x] Age displayed correctly with "Jahre" suffix (54 Jahre)
+- [x] Insurance type displayed correctly (PKV (Privat))
+- [x] Appointment count matches calendar events length (9)
+
+#### Phase 7.2: Render Checkup Cards ✅
+- [x] All 9 calendar events rendered as cards
+- [x] Cards displayed in chronological order
+- [x] Date formatting correct (4. Februar 2026 - German format)
+- [x] Card structure: title, date, description complete
+- [x] Urgent styling applied (red border) for events within 1 month
+- [x] Future styling (yellow background) ready for future checkups
+- [x] Future info box HTML ready for future checkups
+- [x] No duplicate cards rendered
+
+#### Phase 7.3-7.4: ICS Download ✅
+- [x] Download button triggers ICS file download
+- [x] Downloaded file has correct name: gesundheitsvorsorge.ics
+- [x] ICS file content is valid RFC 5545 compliant
+- [x] All 9 events included in ICS file
+- [x] Each event has VEVENT structure
+- [x] Date format correct: YYYYMMDD (20260204)
+- [x] 7-day reminders included (TRIGGER:-P7D)
+- [x] Unique UIDs for each event
+- [x] German descriptions included
+
+**Status:** Alle Tests bestanden
+
+**Test-Daten:**
+- User: male, 54 Jahre, PKV
+- 9 events generated, all displayed
+- Download successful: gesundheitsvorsorge.ics (135 lines)
+- ICS structure verified: VCALENDAR > 9x VEVENT with VALARM
+
+**Phase 7 Gesamt-Status:** ✅ Abgeschlossen

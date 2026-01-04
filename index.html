@@ -481,6 +481,115 @@
       color: white;
     }
 
+    /* Summary Section */
+    .summary-section {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 2rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .summary-item strong {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .summary-item span {
+      color: var(--text);
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    /* Checkup Cards in Step 3 */
+    .checkup-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .checkup-event-card {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow);
+      border-left: 4px solid var(--primary);
+      transition: transform 300ms ease;
+    }
+
+    .checkup-event-card:hover {
+      transform: translateX(4px);
+    }
+
+    .checkup-event-card.urgent {
+      border-left-color: #dc2626;
+      border-left-width: 6px;
+    }
+
+    .checkup-event-card.future {
+      background-color: #fffbeb;
+      border-left-color: #f59e0b;
+    }
+
+    .checkup-event-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .checkup-event-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .checkup-event-date {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .checkup-event-date.urgent {
+      color: #dc2626;
+    }
+
+    .checkup-event-date.future {
+      color: #f59e0b;
+    }
+
+    .checkup-event-description {
+      color: var(--text-muted);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .future-info-box {
+      background-color: #fef3c7;
+      border: 2px solid #f59e0b;
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      color: #78350f;
+    }
+
     /* Utility Classes */
     .hidden {
       display: none;
@@ -665,6 +774,31 @@
       <div class="step-content">
         <h2>Schritt 3: Zusammenfassung</h2>
         <p>Ihre Termine im Überblick.</p>
+
+        <!-- Summary Section -->
+        <div id="summary-section" class="summary-section">
+          <div class="summary-grid">
+            <div class="summary-item">
+              <strong>Geschlecht:</strong>
+              <span id="summary-gender"></span>
+            </div>
+            <div class="summary-item">
+              <strong>Alter:</strong>
+              <span id="summary-age"></span>
+            </div>
+            <div class="summary-item">
+              <strong>Versicherung:</strong>
+              <span id="summary-insurance"></span>
+            </div>
+            <div class="summary-item">
+              <strong>Anzahl Termine:</strong>
+              <span id="summary-count"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checkup Cards Container -->
+        <div id="checkup-cards" class="checkup-cards"></div>
       </div>
       <div class="button-group">
         <button class="btn-secondary" id="btn-back-3">Zurück</button>
@@ -907,7 +1041,242 @@
     }
 
     function goToStep3() {
+      generateCalendar();
+      renderStep3();
       showStep(3);
+    }
+
+    // ===== Calendar Generation Functions =====
+
+    function generateCalendar() {
+      calendarEvents = [];
+      const { current, future } = filterCheckupsByAge();
+
+      // Process current checkups
+      current.forEach(checkup => {
+        if (!userData.enabledCheckups[checkup.id]) return;
+
+        const interval = checkup.intervals[userData.insuranceType];
+        if (interval === null) return; // Not covered
+
+        const lastDate = userData.checkups[checkup.id];
+        const longerAgo = document.getElementById(`longer-${checkup.id}`)?.checked;
+
+        let nextDate;
+        let description = checkup.description;
+        let urgent = false;
+
+        if (!lastDate || longerAgo) {
+          // Schedule 1 month from now
+          nextDate = new Date();
+          nextDate.setMonth(nextDate.getMonth() + 1);
+
+          if (longerAgo) {
+            description += ' (überfällig - bitte zeitnah vereinbaren)';
+            urgent = true;
+          } else {
+            description += ' (erstmalig)';
+          }
+        } else {
+          // Calculate from last date + interval
+          nextDate = new Date(lastDate);
+          nextDate.setMonth(nextDate.getMonth() + interval);
+        }
+
+        calendarEvents.push({
+          name: checkup.name,
+          date: nextDate,
+          description: description,
+          interval: interval,
+          urgent: urgent,
+          future: false,
+          id: checkup.id
+        });
+      });
+
+      // Process future checkups
+      future.forEach(checkup => {
+        if (!userData.enabledCheckups[checkup.id]) return;
+
+        const interval = checkup.intervals[userData.insuranceType];
+        if (interval === null) return;
+
+        // Calculate target date (when user reaches minAge)
+        const yearsUntilEligible = checkup.minAge - userData.age;
+        const nextDate = new Date();
+        nextDate.setFullYear(nextDate.getFullYear() + yearsUntilEligible);
+
+        const description = `${checkup.description} (ab ${checkup.minAge} Jahren empfohlen)`;
+
+        calendarEvents.push({
+          name: checkup.name,
+          date: nextDate,
+          description: description,
+          interval: interval,
+          urgent: false,
+          future: true,
+          id: checkup.id
+        });
+      });
+
+      // Process custom checkups
+      userData.customCheckups.forEach(checkup => {
+        let nextDate;
+        let description = checkup.description;
+
+        if (checkup.lastDate) {
+          nextDate = new Date(checkup.lastDate);
+          nextDate.setMonth(nextDate.getMonth() + checkup.interval);
+        } else {
+          nextDate = new Date();
+          nextDate.setMonth(nextDate.getMonth() + 1);
+          description += ' (erstmalig)';
+        }
+
+        calendarEvents.push({
+          name: checkup.name,
+          date: nextDate,
+          description: description,
+          interval: checkup.interval,
+          urgent: false,
+          future: false,
+          id: checkup.id
+        });
+      });
+
+      // Sort by date
+      calendarEvents.sort((a, b) => a.date - b.date);
+
+      console.log('Calendar generated:', calendarEvents);
+    }
+
+    function formatDateGerman(date) {
+      const months = [
+        'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+        'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+      ];
+
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+
+      return `${day}. ${month} ${year}`;
+    }
+
+    function formatDateICS(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}${month}${day}`;
+    }
+
+    function generateICSFile() {
+      let icsContent = 'BEGIN:VCALENDAR\r\n';
+      icsContent += 'VERSION:2.0\r\n';
+      icsContent += 'PRODID:-//Gesundheitsvorsorge Planer//DE\r\n';
+      icsContent += 'CALSCALE:GREGORIAN\r\n';
+      icsContent += 'METHOD:PUBLISH\r\n';
+      icsContent += 'X-WR-CALNAME:Gesundheitsvorsorge\r\n';
+      icsContent += 'X-WR-TIMEZONE:Europe/Berlin\r\n';
+
+      calendarEvents.forEach((event, index) => {
+        const uid = `${event.id}-${Date.now()}-${index}@gesundheitsvorsorge`;
+        const dtStamp = formatDateICS(new Date());
+        const dtStart = formatDateICS(event.date);
+
+        icsContent += 'BEGIN:VEVENT\r\n';
+        icsContent += `UID:${uid}\r\n`;
+        icsContent += `DTSTAMP:${dtStamp}T120000Z\r\n`;
+        icsContent += `DTSTART;VALUE=DATE:${dtStart}\r\n`;
+        icsContent += `SUMMARY:${event.name}\r\n`;
+        icsContent += `DESCRIPTION:${event.description}\r\n`;
+        icsContent += 'STATUS:CONFIRMED\r\n';
+        icsContent += 'TRANSP:TRANSPARENT\r\n';
+        icsContent += 'BEGIN:VALARM\r\n';
+        icsContent += 'TRIGGER:-P7D\r\n';
+        icsContent += 'ACTION:DISPLAY\r\n';
+        icsContent += `DESCRIPTION:Erinnerung: ${event.name} in 1 Woche\r\n`;
+        icsContent += 'END:VALARM\r\n';
+        icsContent += 'END:VEVENT\r\n';
+      });
+
+      icsContent += 'END:VCALENDAR\r\n';
+
+      return icsContent;
+    }
+
+    function downloadICS() {
+      const icsContent = generateICSFile();
+      const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'gesundheitsvorsorge.ics';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+
+      console.log('ICS file downloaded');
+    }
+
+    function renderStep3() {
+      // Populate summary section
+      const genderText = userData.gender === 'male' ? 'Männlich' : 'Weiblich';
+      const insuranceText = {
+        'gkv': 'GKV (Gesetzlich)',
+        'pkv': 'PKV (Privat)',
+        'recommended': 'Empfohlen (unabhängig)'
+      }[userData.insuranceType] || userData.insuranceType;
+
+      document.getElementById('summary-gender').textContent = genderText;
+      document.getElementById('summary-age').textContent = `${userData.age} Jahre`;
+      document.getElementById('summary-insurance').textContent = insuranceText;
+      document.getElementById('summary-count').textContent = calendarEvents.length;
+
+      // Render checkup cards
+      const cardsContainer = document.getElementById('checkup-cards');
+      cardsContainer.innerHTML = '';
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      calendarEvents.forEach(event => {
+        const card = document.createElement('div');
+        card.className = 'checkup-event-card';
+
+        // Determine if urgent or future
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0);
+
+        const oneMonthFromNow = new Date();
+        oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
+        oneMonthFromNow.setHours(0, 0, 0, 0);
+
+        let dateClass = '';
+        if (event.urgent || eventDate <= oneMonthFromNow) {
+          card.classList.add('urgent');
+          dateClass = 'urgent';
+        } else if (event.future) {
+          card.classList.add('future');
+          dateClass = 'future';
+        }
+
+        // Build card HTML
+        const dateString = formatDateGerman(event.date);
+
+        card.innerHTML = `
+          <div class="checkup-event-header">
+            <h3 class="checkup-event-title">${event.name}</h3>
+            <div class="checkup-event-date ${dateClass}">${dateString}</div>
+          </div>
+          <p class="checkup-event-description">${event.description}</p>
+          ${event.future ? '<div class="future-info-box">⏳ Dieser Termin liegt in der Zukunft und wird fällig, wenn Sie das erforderliche Alter erreichen.</div>' : ''}
+        `;
+
+        cardsContainer.appendChild(card);
+      });
+
+      console.log('Step 3 rendered with', calendarEvents.length, 'events');
     }
 
     // ===== Checkup Filtering Functions =====
@@ -1270,9 +1639,7 @@
 
       // Step 3 buttons
       document.getElementById('btn-back-3').addEventListener('click', goToStep2);
-      document.getElementById('btn-download').addEventListener('click', function() {
-        console.log('Download clicked - ICS generation not yet implemented');
-      });
+      document.getElementById('btn-download').addEventListener('click', downloadICS);
 
       console.log('Gesundheitsvorsorge Planer initialisiert');
     });
