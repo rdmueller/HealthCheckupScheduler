@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gesundheitsvorsorge Planer - Erstellen Sie Ihren persönlichen Vorsorge-Kalender">
+  <title>Gesundheitsvorsorge Planer</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    /* CSS Variables */
+    :root {
+      --primary: #2a5a4a;
+      --primary-light: #3d7a66;
+      --accent: #e8956f;
+      --bg: #faf8f5;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --card: #ffffff;
+      --border: #e0e0e0;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Base Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Typography */
+    body {
+      font-family: 'Karla', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+    }
+
+    h1, h2, h3 {
+      font-family: 'DM Serif Display', serif;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 2rem 0;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    header h1 {
+      color: white;
+    }
+
+    header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.125rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .version {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Progress Indicator */
+    .progress {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .progress-circle {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background-color: var(--border);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      transition: all 300ms ease;
+    }
+
+    .progress-step.active .progress-circle {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .progress-step.completed .progress-circle {
+      background-color: var(--primary-light);
+      color: white;
+    }
+
+    .progress-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .progress-step.active .progress-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .progress-line {
+      width: 3rem;
+      height: 2px;
+      background-color: var(--border);
+    }
+
+    .progress-step.completed + .progress-line {
+      background-color: var(--primary-light);
+    }
+
+    /* Step Container */
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+      animation: fadeIn 300ms ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(1rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-content {
+      background-color: var(--card);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 2rem;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .required::after {
+      content: ' *';
+      color: var(--accent);
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      font-family: 'Karla', sans-serif;
+      font-size: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background-color: white;
+      transition: all 300ms ease;
+      min-height: 44px;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(42, 90, 74, 0.1);
+    }
+
+    /* Radio Buttons */
+    .radio-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .radio-option {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .radio-option input[type="radio"] {
+      display: none;
+    }
+
+    .radio-label {
+      display: block;
+      padding: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 300ms ease;
+      background-color: white;
+      font-weight: 600;
+    }
+
+    .radio-option input[type="radio"]:checked + .radio-label {
+      border-color: var(--primary);
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .radio-label:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    /* Checkup Cards */
+    .checkup-section {
+      margin-bottom: 2rem;
+    }
+
+    .checkup-section h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .checkup-card {
+      background-color: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 300ms ease;
+    }
+
+    .checkup-card.disabled {
+      opacity: 0.5;
+      background-color: var(--bg);
+    }
+
+    .checkup-card.future {
+      background-color: #f5f5f5;
+    }
+
+    .checkup-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .checkup-checkbox {
+      margin-top: 0.25rem;
+    }
+
+    .checkup-checkbox input[type="checkbox"] {
+      width: 1.25rem;
+      height: 1.25rem;
+      cursor: pointer;
+    }
+
+    .checkup-info {
+      flex: 1;
+    }
+
+    .checkup-name {
+      font-weight: 600;
+      font-size: 1.125rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .checkup-description {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .checkup-interval {
+      font-size: 0.875rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .checkup-not-covered {
+      color: var(--accent);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .checkup-inputs {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .checkup-inputs input[type="date"] {
+      width: 100%;
+      padding: 0.75rem;
+      font-family: 'Karla', sans-serif;
+      font-size: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background-color: white;
+      transition: all 300ms ease;
+    }
+
+    .checkup-inputs input[type="date"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(42, 90, 74, 0.1);
+    }
+
+    .checkup-inputs input[type="date"]:disabled {
+      background-color: var(--bg);
+      cursor: not-allowed;
+    }
+
+    .longer-ago-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .longer-ago-label input[type="checkbox"] {
+      width: 1.125rem;
+      height: 1.125rem;
+      cursor: pointer;
+    }
+
+    .future-info {
+      background-color: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .target-year {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* Custom Checkups */
+    .custom-checkup-form {
+      display: grid;
+      grid-template-columns: 2fr 1fr 2fr auto;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .custom-checkup-list {
+      margin-top: 1rem;
+    }
+
+    .custom-checkup-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .custom-checkup-item button {
+      padding: 0.5rem 1rem;
+      min-height: auto;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      font-family: 'Karla', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 300ms ease;
+      min-height: 44px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #d67d57;
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    /* Summary Section */
+    .summary-section {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 2rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .summary-item strong {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .summary-item span {
+      color: var(--text);
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    /* Checkup Cards in Step 3 */
+    .checkup-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .checkup-event-card {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow);
+      border-left: 4px solid var(--primary);
+      transition: transform 300ms ease;
+    }
+
+    .checkup-event-card:hover {
+      transform: translateX(4px);
+    }
+
+    .checkup-event-card.urgent {
+      border-left-color: #dc2626;
+      border-left-width: 6px;
+    }
+
+    .checkup-event-card.future {
+      background-color: #fffbeb;
+      border-left-color: #f59e0b;
+    }
+
+    .checkup-event-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .checkup-event-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .checkup-event-date {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .checkup-event-date.urgent {
+      color: #dc2626;
+    }
+
+    .checkup-event-date.future {
+      color: #f59e0b;
+    }
+
+    .checkup-event-description {
+      color: var(--text-muted);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .future-info-box {
+      background-color: #fef3c7;
+      border: 2px solid #f59e0b;
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      color: #78350f;
+    }
+
+    /* Utility Classes */
+    .hidden {
+      display: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .container {
+        padding: 1.5rem 1rem;
+      }
+
+      .progress {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .progress-line {
+        width: 2px;
+        height: 2rem;
+        transform: rotate(90deg);
+      }
+
+      .progress-step {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .step-content {
+        padding: 1.5rem;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Gesundheitsvorsorge Planer</h1>
+      <p>Erstellen Sie Ihren persönlichen Vorsorge-Kalender</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Progress Indicator -->
+    <div class="progress">
+      <div class="progress-step active" id="progress-step-1">
+        <div class="progress-circle">1</div>
+        <span class="progress-label">Basisdaten</span>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step" id="progress-step-2">
+        <div class="progress-circle">2</div>
+        <span class="progress-label">Vorsorge</span>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step" id="progress-step-3">
+        <div class="progress-circle">3</div>
+        <span class="progress-label">Übersicht</span>
+      </div>
+    </div>
+
+    <!-- Step 1: Basic Information -->
+    <div class="step active" id="step-1">
+      <div class="step-content">
+        <h2>Schritt 1: Basisdaten</h2>
+        <p>Bitte geben Sie Ihre persönlichen Informationen ein.</p>
+
+        <form id="form-basic-info">
+          <!-- Gender Selection -->
+          <div class="form-group">
+            <label class="required">Geschlecht</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="gender-male" name="gender" value="male">
+                <label for="gender-male" class="radio-label">Männlich</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="gender-female" name="gender" value="female">
+                <label for="gender-female" class="radio-label">Weiblich</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Birth Year -->
+          <div class="form-group">
+            <label for="birth-year" class="required">Geburtsjahr</label>
+            <input
+              type="number"
+              id="birth-year"
+              name="birthYear"
+              min="1920"
+              max="2024"
+              placeholder="z.B. 1972"
+            >
+          </div>
+
+          <!-- Insurance Type -->
+          <div class="form-group">
+            <label for="insurance-type" class="required">Krankenversicherung</label>
+            <select id="insurance-type" name="insuranceType">
+              <option value="">Bitte wählen...</option>
+              <option value="gkv">GKV (Gesetzlich)</option>
+              <option value="pkv">PKV (Privat)</option>
+              <option value="recommended">Empfohlen (Best Practice)</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="button-group">
+        <button class="btn-secondary" id="btn-restart">Neu starten</button>
+        <button class="btn-primary" id="btn-next-1" disabled>Weiter</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Checkup Configuration -->
+    <div class="step" id="step-2">
+      <div class="step-content">
+        <h2>Schritt 2: Vorsorgeuntersuchungen</h2>
+        <p>Wählen Sie Ihre Vorsorgeuntersuchungen aus und geben Sie an, wann Sie zuletzt untersucht wurden.</p>
+
+        <!-- Current Checkups -->
+        <div class="checkup-section" id="current-checkups-section">
+          <h3>Aktuelle Vorsorgeuntersuchungen</h3>
+          <div id="current-checkups-container"></div>
+        </div>
+
+        <!-- Future Checkups -->
+        <div class="checkup-section" id="future-checkups-section">
+          <h3>Zukünftige Vorsorgeuntersuchungen</h3>
+          <p style="color: var(--text-muted); font-size: 0.875rem;">
+            Diese Untersuchungen werden für Sie relevant, wenn Sie das empfohlene Alter erreichen.
+          </p>
+          <div id="future-checkups-container"></div>
+        </div>
+
+        <!-- Custom Checkups -->
+        <div class="checkup-section">
+          <h3>Eigene Untersuchungen hinzufügen</h3>
+          <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
+            Fügen Sie weitere Untersuchungen hinzu, die nicht in der Liste enthalten sind.
+          </p>
+
+          <div class="custom-checkup-form">
+            <div class="form-group" style="margin-bottom: 0;">
+              <input type="text" id="custom-name" placeholder="Name der Untersuchung" style="width: 100%;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <input type="number" id="custom-interval" placeholder="Intervall (Monate)" min="1" style="width: 100%;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <input type="date" id="custom-last-date" style="width: 100%;">
+            </div>
+            <button type="button" class="btn-primary" id="btn-add-custom">Hinzufügen</button>
+          </div>
+
+          <div id="custom-checkups-list" class="custom-checkup-list"></div>
+        </div>
+      </div>
+      <div class="button-group">
+        <button class="btn-secondary" id="btn-back-2">Zurück</button>
+        <button class="btn-primary" id="btn-next-2">Weiter</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Summary & Download -->
+    <div class="step" id="step-3">
+      <div class="step-content">
+        <h2>Schritt 3: Zusammenfassung</h2>
+        <p>Ihre Termine im Überblick.</p>
+
+        <!-- Summary Section -->
+        <div id="summary-section" class="summary-section">
+          <div class="summary-grid">
+            <div class="summary-item">
+              <strong>Geschlecht:</strong>
+              <span id="summary-gender"></span>
+            </div>
+            <div class="summary-item">
+              <strong>Alter:</strong>
+              <span id="summary-age"></span>
+            </div>
+            <div class="summary-item">
+              <strong>Versicherung:</strong>
+              <span id="summary-insurance"></span>
+            </div>
+            <div class="summary-item">
+              <strong>Anzahl Termine:</strong>
+              <span id="summary-count"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checkup Cards Container -->
+        <div id="checkup-cards" class="checkup-cards"></div>
+      </div>
+      <div class="button-group">
+        <button class="btn-secondary" id="btn-back-3">Zurück</button>
+        <button class="btn-primary" id="btn-download">Kalender herunterladen</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>
+        <strong>Haftungsausschluss:</strong> Diese Anwendung bietet nur Orientierungshilfe.
+        Bitte konsultieren Sie Ihren Arzt oder Ihre Ärztin für individuelle medizinische Beratung.
+      </p>
+      <p class="version">Version 1.0.0</p>
+    </div>
+  </footer>
+
+  <script>
+    // Global State
+    let userData = {
+      gender: null,
+      birthYear: null,
+      age: null,
+      insuranceType: null,
+      checkups: {},
+      enabledCheckups: {},
+      customCheckups: []
+    };
+
+    let calendarEvents = [];
+
+    // ===== Checkup Definitions =====
+
+    const checkupDefinitions = {
+      male: [
+        {
+          id: 'gp-checkup',
+          name: 'Hausarzt Check-up',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Blutdruck, Cholesterin, Blutzucker, Leberwerte, Nierenwerte',
+          minAge: 18
+        },
+        {
+          id: 'colonoscopy',
+          name: 'Darmspiegelung',
+          intervals: { gkv: 120, pkv: 60, recommended: 96 },
+          description: 'Darmkrebsvorsorge',
+          minAge: 50
+        },
+        {
+          id: 'stool-test',
+          name: 'Immunologischer Stuhltest',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Alternative zur Darmspiegelung',
+          minAge: 50
+        },
+        {
+          id: 'skin-screening',
+          name: 'Hautkrebs-Screening',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Ganzkörperuntersuchung beim Hautarzt',
+          minAge: 35
+        },
+        {
+          id: 'prostate-dre',
+          name: 'Prostata-Untersuchung (DRU)',
+          intervals: { gkv: 12, pkv: 12, recommended: 12 },
+          description: 'Urologische Untersuchung',
+          minAge: 45
+        },
+        {
+          id: 'psa-test',
+          name: 'PSA-Test',
+          intervals: { gkv: null, pkv: 12, recommended: 12 },
+          description: 'Bluttest zur Prostatakrebs-Früherkennung (GKV Selbstzahler)',
+          minAge: 45
+        },
+        {
+          id: 'eye-exam',
+          name: 'Augenuntersuchung',
+          intervals: { gkv: 24, pkv: 12, recommended: 24 },
+          description: 'Glaukom-Screening, Netzhautuntersuchung',
+          minAge: 40
+        },
+        {
+          id: 'cardio-extended',
+          name: 'Erweiterter Herz-Kreislauf-Check',
+          intervals: { gkv: null, pkv: 24, recommended: 24 },
+          description: 'EKG, Belastungs-EKG, Herz-Ultraschall (PKV)',
+          minAge: 50
+        },
+        {
+          id: 'dental',
+          name: 'Zahnvorsorge',
+          intervals: { gkv: 6, pkv: 6, recommended: 6 },
+          description: 'Professionelle Zahnreinigung',
+          minAge: 18
+        }
+      ],
+      female: [
+        {
+          id: 'gp-checkup',
+          name: 'Hausarzt Check-up',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Blutdruck, Cholesterin, Blutzucker, Leberwerte, Nierenwerte',
+          minAge: 18
+        },
+        {
+          id: 'colonoscopy',
+          name: 'Darmspiegelung',
+          intervals: { gkv: 120, pkv: 60, recommended: 96 },
+          description: 'Darmkrebsvorsorge',
+          minAge: 50
+        },
+        {
+          id: 'stool-test',
+          name: 'Immunologischer Stuhltest',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Alternative zur Darmspiegelung',
+          minAge: 50
+        },
+        {
+          id: 'skin-screening',
+          name: 'Hautkrebs-Screening',
+          intervals: { gkv: 24, pkv: 12, recommended: 12 },
+          description: 'Ganzkörperuntersuchung beim Hautarzt',
+          minAge: 35
+        },
+        {
+          id: 'gynecological',
+          name: 'Gynäkologische Untersuchung',
+          intervals: { gkv: 12, pkv: 12, recommended: 12 },
+          description: 'Gebärmutterhalskrebs-Früherkennung',
+          minAge: 20
+        },
+        {
+          id: 'hpv-test',
+          name: 'HPV-Test',
+          intervals: { gkv: 60, pkv: 36, recommended: 36 },
+          description: 'Gebärmutterhalskrebs-Früherkennung',
+          minAge: 35
+        },
+        {
+          id: 'mammography',
+          name: 'Mammographie',
+          intervals: { gkv: 24, pkv: 24, recommended: 24 },
+          description: 'Brustkrebsvorsorge',
+          minAge: 50,
+          maxAge: 69
+        },
+        {
+          id: 'breast-ultrasound',
+          name: 'Brust-Ultraschall',
+          intervals: { gkv: null, pkv: 12, recommended: 12 },
+          description: 'Ergänzung zur Mammographie (PKV/Selbstzahler)',
+          minAge: 40
+        },
+        {
+          id: 'eye-exam',
+          name: 'Augenuntersuchung',
+          intervals: { gkv: 24, pkv: 12, recommended: 24 },
+          description: 'Glaukom-Screening, Netzhautuntersuchung',
+          minAge: 40
+        },
+        {
+          id: 'cardio-extended',
+          name: 'Erweiterter Herz-Kreislauf-Check',
+          intervals: { gkv: null, pkv: 24, recommended: 24 },
+          description: 'EKG, Belastungs-EKG, Herz-Ultraschall (PKV)',
+          minAge: 50
+        },
+        {
+          id: 'osteoporosis',
+          name: 'Osteoporose-Screening',
+          intervals: { gkv: null, pkv: 24, recommended: 24 },
+          description: 'Knochendichtemessung (PKV/Selbstzahler)',
+          minAge: 50
+        },
+        {
+          id: 'dental',
+          name: 'Zahnvorsorge',
+          intervals: { gkv: 6, pkv: 6, recommended: 6 },
+          description: 'Professionelle Zahnreinigung',
+          minAge: 18
+        }
+      ]
+    };
+
+    // ===== Navigation Functions =====
+
+    function showStep(stepNumber) {
+      // Hide all steps
+      document.querySelectorAll('.step').forEach(step => {
+        step.classList.remove('active');
+      });
+
+      // Show requested step
+      const targetStep = document.getElementById(`step-${stepNumber}`);
+      if (targetStep) {
+        targetStep.classList.add('active');
+      }
+
+      // Update progress indicator
+      updateProgress(stepNumber);
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateProgress(stepNumber) {
+      // Update progress steps
+      for (let i = 1; i <= 3; i++) {
+        const progressStep = document.getElementById(`progress-step-${i}`);
+        if (!progressStep) continue;
+
+        if (i < stepNumber) {
+          progressStep.classList.add('completed');
+          progressStep.classList.remove('active');
+        } else if (i === stepNumber) {
+          progressStep.classList.add('active');
+          progressStep.classList.remove('completed');
+        } else {
+          progressStep.classList.remove('active', 'completed');
+        }
+      }
+    }
+
+    function goToStep1() {
+      showStep(1);
+    }
+
+    function goToStep2() {
+      // Validate and save Step 1 data
+      if (validateStep1()) {
+        saveStep1Data();
+        renderCheckupsList();
+        showStep(2);
+      }
+    }
+
+    function goToStep3() {
+      generateCalendar();
+      renderStep3();
+      showStep(3);
+    }
+
+    // ===== Calendar Generation Functions =====
+
+    function generateCalendar() {
+      calendarEvents = [];
+      const { current, future } = filterCheckupsByAge();
+
+      // Process current checkups
+      current.forEach(checkup => {
+        if (!userData.enabledCheckups[checkup.id]) return;
+
+        const interval = checkup.intervals[userData.insuranceType];
+        if (interval === null) return; // Not covered
+
+        const lastDate = userData.checkups[checkup.id];
+        const longerAgo = document.getElementById(`longer-${checkup.id}`)?.checked;
+
+        let nextDate;
+        let description = checkup.description;
+        let urgent = false;
+
+        if (!lastDate || longerAgo) {
+          // Schedule 1 month from now
+          nextDate = new Date();
+          nextDate.setMonth(nextDate.getMonth() + 1);
+
+          if (longerAgo) {
+            description += ' (überfällig - bitte zeitnah vereinbaren)';
+            urgent = true;
+          } else {
+            description += ' (erstmalig)';
+          }
+        } else {
+          // Calculate from last date + interval
+          nextDate = new Date(lastDate);
+          nextDate.setMonth(nextDate.getMonth() + interval);
+        }
+
+        calendarEvents.push({
+          name: checkup.name,
+          date: nextDate,
+          description: description,
+          interval: interval,
+          urgent: urgent,
+          future: false,
+          id: checkup.id
+        });
+      });
+
+      // Process future checkups
+      future.forEach(checkup => {
+        if (!userData.enabledCheckups[checkup.id]) return;
+
+        const interval = checkup.intervals[userData.insuranceType];
+        if (interval === null) return;
+
+        // Calculate target date (when user reaches minAge)
+        const yearsUntilEligible = checkup.minAge - userData.age;
+        const nextDate = new Date();
+        nextDate.setFullYear(nextDate.getFullYear() + yearsUntilEligible);
+
+        const description = `${checkup.description} (ab ${checkup.minAge} Jahren empfohlen)`;
+
+        calendarEvents.push({
+          name: checkup.name,
+          date: nextDate,
+          description: description,
+          interval: interval,
+          urgent: false,
+          future: true,
+          id: checkup.id
+        });
+      });
+
+      // Process custom checkups
+      userData.customCheckups.forEach(checkup => {
+        let nextDate;
+        let description = checkup.description;
+
+        if (checkup.lastDate) {
+          nextDate = new Date(checkup.lastDate);
+          nextDate.setMonth(nextDate.getMonth() + checkup.interval);
+        } else {
+          nextDate = new Date();
+          nextDate.setMonth(nextDate.getMonth() + 1);
+          description += ' (erstmalig)';
+        }
+
+        calendarEvents.push({
+          name: checkup.name,
+          date: nextDate,
+          description: description,
+          interval: checkup.interval,
+          urgent: false,
+          future: false,
+          id: checkup.id
+        });
+      });
+
+      // Sort by date
+      calendarEvents.sort((a, b) => a.date - b.date);
+
+      console.log('Calendar generated:', calendarEvents);
+    }
+
+    function formatDateGerman(date) {
+      const months = [
+        'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+        'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+      ];
+
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+
+      return `${day}. ${month} ${year}`;
+    }
+
+    function formatDateICS(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}${month}${day}`;
+    }
+
+    function generateICSFile() {
+      let icsContent = 'BEGIN:VCALENDAR\r\n';
+      icsContent += 'VERSION:2.0\r\n';
+      icsContent += 'PRODID:-//Gesundheitsvorsorge Planer//DE\r\n';
+      icsContent += 'CALSCALE:GREGORIAN\r\n';
+      icsContent += 'METHOD:PUBLISH\r\n';
+      icsContent += 'X-WR-CALNAME:Gesundheitsvorsorge\r\n';
+      icsContent += 'X-WR-TIMEZONE:Europe/Berlin\r\n';
+
+      calendarEvents.forEach((event, index) => {
+        const uid = `${event.id}-${Date.now()}-${index}@gesundheitsvorsorge`;
+        const dtStamp = formatDateICS(new Date());
+        const dtStart = formatDateICS(event.date);
+
+        icsContent += 'BEGIN:VEVENT\r\n';
+        icsContent += `UID:${uid}\r\n`;
+        icsContent += `DTSTAMP:${dtStamp}T120000Z\r\n`;
+        icsContent += `DTSTART;VALUE=DATE:${dtStart}\r\n`;
+        icsContent += `SUMMARY:${event.name}\r\n`;
+        icsContent += `DESCRIPTION:${event.description}\r\n`;
+        icsContent += 'STATUS:CONFIRMED\r\n';
+        icsContent += 'TRANSP:TRANSPARENT\r\n';
+        icsContent += 'BEGIN:VALARM\r\n';
+        icsContent += 'TRIGGER:-P7D\r\n';
+        icsContent += 'ACTION:DISPLAY\r\n';
+        icsContent += `DESCRIPTION:Erinnerung: ${event.name} in 1 Woche\r\n`;
+        icsContent += 'END:VALARM\r\n';
+        icsContent += 'END:VEVENT\r\n';
+      });
+
+      icsContent += 'END:VCALENDAR\r\n';
+
+      return icsContent;
+    }
+
+    function downloadICS() {
+      const icsContent = generateICSFile();
+      const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'gesundheitsvorsorge.ics';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+
+      console.log('ICS file downloaded');
+    }
+
+    function renderStep3() {
+      // Populate summary section
+      const genderText = userData.gender === 'male' ? 'Männlich' : 'Weiblich';
+      const insuranceText = {
+        'gkv': 'GKV (Gesetzlich)',
+        'pkv': 'PKV (Privat)',
+        'recommended': 'Empfohlen (unabhängig)'
+      }[userData.insuranceType] || userData.insuranceType;
+
+      document.getElementById('summary-gender').textContent = genderText;
+      document.getElementById('summary-age').textContent = `${userData.age} Jahre`;
+      document.getElementById('summary-insurance').textContent = insuranceText;
+      document.getElementById('summary-count').textContent = calendarEvents.length;
+
+      // Render checkup cards
+      const cardsContainer = document.getElementById('checkup-cards');
+      cardsContainer.innerHTML = '';
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      calendarEvents.forEach(event => {
+        const card = document.createElement('div');
+        card.className = 'checkup-event-card';
+
+        // Determine if urgent or future
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0);
+
+        const oneMonthFromNow = new Date();
+        oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
+        oneMonthFromNow.setHours(0, 0, 0, 0);
+
+        let dateClass = '';
+        if (event.urgent || eventDate <= oneMonthFromNow) {
+          card.classList.add('urgent');
+          dateClass = 'urgent';
+        } else if (event.future) {
+          card.classList.add('future');
+          dateClass = 'future';
+        }
+
+        // Build card HTML
+        const dateString = formatDateGerman(event.date);
+
+        card.innerHTML = `
+          <div class="checkup-event-header">
+            <h3 class="checkup-event-title">${event.name}</h3>
+            <div class="checkup-event-date ${dateClass}">${dateString}</div>
+          </div>
+          <p class="checkup-event-description">${event.description}</p>
+          ${event.future ? '<div class="future-info-box">⏳ Dieser Termin liegt in der Zukunft und wird fällig, wenn Sie das erforderliche Alter erreichen.</div>' : ''}
+        `;
+
+        cardsContainer.appendChild(card);
+      });
+
+      console.log('Step 3 rendered with', calendarEvents.length, 'events');
+    }
+
+    // ===== Checkup Filtering Functions =====
+
+    function getCheckupsForUser() {
+      // Get checkups based on gender
+      const checkups = checkupDefinitions[userData.gender] || [];
+      return checkups;
+    }
+
+    function filterCheckupsByAge() {
+      const checkups = getCheckupsForUser();
+      const age = userData.age;
+
+      const current = [];
+      const future = [];
+
+      checkups.forEach(checkup => {
+        // Check if currently applicable
+        const isOldEnough = age >= checkup.minAge;
+        const isTooOld = checkup.maxAge && age > checkup.maxAge;
+
+        if (isOldEnough && !isTooOld) {
+          current.push(checkup);
+        } else if (!isOldEnough) {
+          future.push(checkup);
+        }
+        // If too old (maxAge exceeded), don't include at all
+      });
+
+      return { current, future };
+    }
+
+    // ===== Rendering Functions =====
+
+    function renderCheckupsList() {
+      const { current, future } = filterCheckupsByAge();
+
+      // Initialize enabled checkups for all (default: all enabled)
+      current.forEach(checkup => {
+        if (!(checkup.id in userData.enabledCheckups)) {
+          userData.enabledCheckups[checkup.id] = true;
+        }
+      });
+      future.forEach(checkup => {
+        if (!(checkup.id in userData.enabledCheckups)) {
+          userData.enabledCheckups[checkup.id] = true;
+        }
+      });
+
+      renderCurrentCheckups(current);
+      renderFutureCheckups(future);
+      renderCustomCheckups();
+    }
+
+    function renderCurrentCheckups(checkups) {
+      const container = document.getElementById('current-checkups-container');
+      container.innerHTML = '';
+
+      if (checkups.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">Keine aktuellen Vorsorgeuntersuchungen für Ihr Alter.</p>';
+        return;
+      }
+
+      checkups.forEach(checkup => {
+        const interval = checkup.intervals[userData.insuranceType];
+        const isEnabled = userData.enabledCheckups[checkup.id];
+        const isCovered = interval !== null;
+
+        const card = document.createElement('div');
+        card.className = 'checkup-card' + (isEnabled ? '' : ' disabled');
+        card.id = `checkup-${checkup.id}`;
+
+        let intervalText = '';
+        if (isCovered) {
+          intervalText = `<span class="checkup-interval">Alle ${interval} Monate</span>`;
+        } else {
+          intervalText = `<span class="checkup-not-covered">In deinem gewählten Tarif nicht verfügbar (Selbstzahler)</span>`;
+        }
+
+        card.innerHTML = `
+          <div class="checkup-header">
+            <div class="checkup-checkbox">
+              <input type="checkbox" id="chk-${checkup.id}" ${isEnabled ? 'checked' : ''} onchange="toggleCheckupEnabled('${checkup.id}')">
+            </div>
+            <div class="checkup-info">
+              <div class="checkup-name">${checkup.name}</div>
+              <div class="checkup-description">${checkup.description}</div>
+              ${intervalText}
+            </div>
+          </div>
+          <div class="checkup-inputs">
+            <div>
+              <label for="date-${checkup.id}" style="display: block; font-size: 0.875rem; margin-bottom: 0.5rem;">
+                Letzte Untersuchung
+              </label>
+              <input
+                type="date"
+                id="date-${checkup.id}"
+                ${!isEnabled ? 'disabled' : ''}
+                max="${new Date().toISOString().split('T')[0]}"
+                onchange="saveCheckupDate('${checkup.id}')"
+              >
+            </div>
+            <label class="longer-ago-label">
+              <input
+                type="checkbox"
+                id="longer-${checkup.id}"
+                ${!isEnabled ? 'disabled' : ''}
+                onchange="toggleLongerAgo('${checkup.id}')"
+              >
+              <span>Länger her</span>
+            </label>
+          </div>
+        `;
+
+        container.appendChild(card);
+
+        // Restore saved date if exists
+        if (userData.checkups[checkup.id]) {
+          document.getElementById(`date-${checkup.id}`).value = userData.checkups[checkup.id];
+        }
+      });
+    }
+
+    function renderFutureCheckups(checkups) {
+      const container = document.getElementById('future-checkups-container');
+      const section = document.getElementById('future-checkups-section');
+
+      if (checkups.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+
+      section.style.display = 'block';
+      container.innerHTML = '';
+
+      checkups.forEach(checkup => {
+        const isEnabled = userData.enabledCheckups[checkup.id];
+        const targetYear = new Date().getFullYear() + (checkup.minAge - userData.age);
+
+        const card = document.createElement('div');
+        card.className = 'checkup-card future' + (isEnabled ? '' : ' disabled');
+        card.id = `checkup-${checkup.id}`;
+
+        card.innerHTML = `
+          <div class="checkup-header">
+            <div class="checkup-checkbox">
+              <input type="checkbox" id="chk-${checkup.id}" ${isEnabled ? 'checked' : ''} onchange="toggleCheckupEnabled('${checkup.id}')">
+            </div>
+            <div class="checkup-info">
+              <div class="checkup-name">${checkup.name}</div>
+              <div class="checkup-description">${checkup.description}</div>
+              <div class="future-info">
+                <strong>Ab ${checkup.minAge} Jahren empfohlen</strong><br>
+                Zielj ahr: <span class="target-year">${targetYear}</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function renderCustomCheckups() {
+      const container = document.getElementById('custom-checkups-list');
+      container.innerHTML = '';
+
+      if (userData.customCheckups.length === 0) {
+        return;
+      }
+
+      userData.customCheckups.forEach((checkup, index) => {
+        const item = document.createElement('div');
+        item.className = 'custom-checkup-item';
+
+        const lastDateText = checkup.lastDate
+          ? new Date(checkup.lastDate).toLocaleDateString('de-DE')
+          : 'Keine Angabe';
+
+        item.innerHTML = `
+          <div>
+            <strong>${checkup.name}</strong><br>
+            <span style="font-size: 0.875rem; color: var(--text-muted);">
+              Alle ${checkup.interval} Monate | Letzte Untersuchung: ${lastDateText}
+            </span>
+          </div>
+          <button class="btn-secondary" onclick="removeCustomCheckup(${index})">Entfernen</button>
+        `;
+
+        container.appendChild(item);
+      });
+    }
+
+    function toggleCheckupEnabled(checkupId) {
+      const isChecked = document.getElementById(`chk-${checkupId}`).checked;
+      userData.enabledCheckups[checkupId] = isChecked;
+
+      const card = document.getElementById(`checkup-${checkupId}`);
+      const dateInput = document.getElementById(`date-${checkupId}`);
+      const longerCheckbox = document.getElementById(`longer-${checkupId}`);
+
+      if (isChecked) {
+        card.classList.remove('disabled');
+        if (dateInput) dateInput.disabled = false;
+        if (longerCheckbox) longerCheckbox.disabled = false;
+      } else {
+        card.classList.add('disabled');
+        if (dateInput) dateInput.disabled = true;
+        if (longerCheckbox) longerCheckbox.disabled = true;
+      }
+    }
+
+    function toggleLongerAgo(checkupId) {
+      const longerCheckbox = document.getElementById(`longer-${checkupId}`);
+      const dateInput = document.getElementById(`date-${checkupId}`);
+
+      if (longerCheckbox.checked) {
+        dateInput.disabled = true;
+        dateInput.value = '';
+        delete userData.checkups[checkupId];
+      } else {
+        dateInput.disabled = false;
+      }
+    }
+
+    function saveCheckupDate(checkupId) {
+      const dateInput = document.getElementById(`date-${checkupId}`);
+      if (dateInput.value) {
+        userData.checkups[checkupId] = dateInput.value;
+      } else {
+        delete userData.checkups[checkupId];
+      }
+    }
+
+    function addCustomCheckup() {
+      const nameInput = document.getElementById('custom-name');
+      const intervalInput = document.getElementById('custom-interval');
+      const dateInput = document.getElementById('custom-last-date');
+
+      const name = nameInput.value.trim();
+      const interval = parseInt(intervalInput.value);
+
+      if (!name || !interval || interval < 1) {
+        alert('Bitte geben Sie Name und Intervall an.');
+        return;
+      }
+
+      const customCheckup = {
+        id: `custom-${Date.now()}`,
+        name: name,
+        interval: interval,
+        lastDate: dateInput.value || null,
+        description: 'Eigene Untersuchung'
+      };
+
+      userData.customCheckups.push(customCheckup);
+
+      // Clear inputs
+      nameInput.value = '';
+      intervalInput.value = '';
+      dateInput.value = '';
+
+      renderCustomCheckups();
+    }
+
+    function removeCustomCheckup(index) {
+      userData.customCheckups.splice(index, 1);
+      renderCustomCheckups();
+    }
+
+    // ===== Validation Functions =====
+
+    function validateStep1() {
+      const gender = document.querySelector('input[name="gender"]:checked');
+      const birthYear = document.getElementById('birth-year').value;
+      const insuranceType = document.getElementById('insurance-type').value;
+
+      return !!(gender && birthYear && insuranceType);
+    }
+
+    function updateStep1Button() {
+      const btnNext = document.getElementById('btn-next-1');
+      if (validateStep1()) {
+        btnNext.disabled = false;
+      } else {
+        btnNext.disabled = true;
+      }
+    }
+
+    function saveStep1Data() {
+      // Get form values
+      const gender = document.querySelector('input[name="gender"]:checked').value;
+      const birthYear = parseInt(document.getElementById('birth-year').value);
+      const insuranceType = document.getElementById('insurance-type').value;
+
+      // Calculate age
+      const currentYear = new Date().getFullYear();
+      const age = currentYear - birthYear;
+
+      // Save to userData
+      userData.gender = gender;
+      userData.birthYear = birthYear;
+      userData.age = age;
+      userData.insuranceType = insuranceType;
+
+      console.log('Step 1 data saved:', userData);
+    }
+
+    function restart() {
+      // Reset user data
+      userData = {
+        gender: null,
+        birthYear: null,
+        age: null,
+        insuranceType: null,
+        checkups: {},
+        enabledCheckups: {},
+        customCheckups: []
+      };
+
+      // Reset calendar events
+      calendarEvents = [];
+
+      // Reset form
+      document.getElementById('form-basic-info').reset();
+      updateStep1Button();
+
+      // Go back to step 1
+      goToStep1();
+
+      console.log('Application restarted');
+    }
+
+    // ===== Event Listeners =====
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Step 1 form validation
+      const genderInputs = document.querySelectorAll('input[name="gender"]');
+      const birthYearInput = document.getElementById('birth-year');
+      const insuranceTypeInput = document.getElementById('insurance-type');
+
+      genderInputs.forEach(input => {
+        input.addEventListener('change', updateStep1Button);
+      });
+
+      birthYearInput.addEventListener('input', updateStep1Button);
+      insuranceTypeInput.addEventListener('change', updateStep1Button);
+
+      // Step 1 buttons
+      document.getElementById('btn-next-1').addEventListener('click', goToStep2);
+      document.getElementById('btn-restart').addEventListener('click', restart);
+
+      // Step 2 buttons
+      document.getElementById('btn-back-2').addEventListener('click', goToStep1);
+      document.getElementById('btn-next-2').addEventListener('click', goToStep3);
+      document.getElementById('btn-add-custom').addEventListener('click', addCustomCheckup);
+
+      // Step 3 buttons
+      document.getElementById('btn-back-3').addEventListener('click', goToStep2);
+      document.getElementById('btn-download').addEventListener('click', downloadICS);
+
+      console.log('Gesundheitsvorsorge Planer initialisiert');
+    });
+  </script>
+</body>
+</html>
