@@ -10,6 +10,7 @@ A web-based application that helps users manage their preventive health checkups
 - Custom checkup management
 - .ics calendar file generation
 - Mobile-responsive design
+- AI-generated disclaimer for transparency and user awareness
 
 ### Deployment
 - **Platform:** GitHub Pages
@@ -400,6 +401,23 @@ END:VEVENT
 - Focus states with green border + shadow
 - Disabled states with reduced opacity
 - Transition animations (300ms ease)
+
+### 8.5 Footer & Disclaimer
+The application footer includes an important disclaimer about AI-generated content:
+
+**Disclaimer (Haftungsausschluss):**
+- Clearly states that the application is completely AI-generated
+- Emphasizes that all information must be verified by the user
+- Advises users to consult their healthcare provider for individual medical advice
+- Positioned prominently in the footer for visibility on all pages
+- Text content (German):
+  - "Diese Anwendung ist vollständig KI-generiert und bietet nur Orientierungshilfe."
+  - "Alle Angaben müssen selbst überprüft werden."
+  - "Bitte konsultieren Sie Ihren Arzt oder Ihre Ärztin für individuelle medizinische Beratung."
+
+**Version Information:**
+- Display current version number (e.g., "Version 1.0.0")
+- Provides transparency about the application state
 
 ---
 
