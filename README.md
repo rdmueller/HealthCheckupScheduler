@@ -8,6 +8,7 @@ Eine Single-Page-Anwendung zur Erstellung eines personalisierten Vorsorgekalende
 - **21 Vorsorgeuntersuchungen**: 9 für Männer, 12 für Frauen
 - **Altersbasierte Filterung**: Automatische Anzeige relevanter Untersuchungen basierend auf Alter (minAge/maxAge)
 - **Versicherungsspezifische Intervalle**: Unterschiedliche Empfehlungen für GKV, PKV und Best Practice
+- **Intelligente Terminstaffelung**: Prioritätsbasiertes System verhindert, dass alle Termine auf denselben Tag fallen
 - **Eigene Untersuchungen**: Hinzufügen individueller Vorsorgeuntersuchungen
 - **ICS-Export**: RFC 5545-konformer Kalender-Export für Google Calendar, Apple Calendar, Outlook, etc.
 - **7-Tage-Erinnerungen**: Automatische Reminder vor jedem Termin
@@ -85,6 +86,7 @@ Alternativ manuell:
    - Datum der letzten Untersuchung eingeben (optional)
    - "Länger her" aktivieren, wenn keine genaue Angabe möglich
    - Eigene Untersuchungen hinzufügen
+   - **Hinweis**: Ohne Datumsangaben werden Termine automatisch gestaffelt über mehrere Monate verteilt (Priorität 1-5), um realistische Planung zu ermöglichen
 
 3. **Schritt 3: Zusammenfassung**
    - Übersicht aller geplanten Termine
