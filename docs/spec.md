@@ -7,6 +7,7 @@ A web-based application that helps users manage their preventive health checkups
 ### Key Features
 - Age-appropriate checkup recommendations
 - Insurance-type specific intervals (GKV/PKV/Recommended)
+- Priority-based appointment staggering (prevents scheduling all checkups on the same day)
 - Custom checkup management
 - .ics calendar file generation
 - Mobile-responsive design
@@ -287,6 +288,41 @@ Displays all scheduled checkups in chronological order.
 
 ---
 
+## 5.3 Appointment Staggering Rationale
+
+### The Problem
+When users check "Länger her" (longer ago) for all checkups or don't provide any last checkup dates, without staggering all appointments would be scheduled on the same date (1 month from today). This is unrealistic because:
+- It's impossible to complete 5-10 different preventive checkups on the same day
+- Different checkups require appointments at different medical facilities
+- Some checkups have specific preparation requirements
+- Users need time to schedule and attend multiple appointments
+
+### The Solution
+The application implements a priority-based staggering system that automatically spreads appointments over several months based on medical importance and practical considerations:
+
+**Example Distribution for a User with No Dates:**
+- February 2026: GP Check-up (Priority 1)
+- February 2026: Dental Care (Priority 1)
+- March 2026: Gynecological/Prostate Exam (Priority 2)
+- April 2026: Skin Screening (Priority 3)
+- May 2026: Colonoscopy (Priority 4)
+- June 2026: Extended Cardiovascular Check (Priority 5)
+
+### Priority Assignment Criteria
+Priorities are assigned based on:
+1. **Medical urgency**: GP check-ups and dental care are foundational
+2. **Frequency**: More frequent checkups (like dental) get higher priority
+3. **Planning requirements**: Checkups requiring extensive preparation (colonoscopy) have lower priority
+4. **Practical access**: Common checkups are prioritized over specialized ones
+
+### Custom Checkup Staggering
+Custom checkups without dates are staggered incrementally starting from the base priority (3 months), with each additional custom checkup scheduled one month later. This ensures:
+- Custom checkups don't conflict with standard ones
+- Multiple custom checkups are spread out
+- Users have flexibility in scheduling
+
+---
+
 ## 6. Business Logic
 
 ### 6.1 Age-Based Filtering
@@ -295,13 +331,54 @@ Displays all scheduled checkups in chronological order.
   - **Current:** age >= minAge AND (no maxAge OR age <= maxAge)
   - **Future:** age < minAge
 
-### 6.2 Calendar Event Generation
+### 6.2 Checkup Priority System
+
+To prevent all checkups from being scheduled on the same date when no last checkup date is provided, the application uses a priority-based staggering system. Each checkup has an assigned priority level that determines how many months from today it will be scheduled.
+
+#### Priority Levels
+- **Priority 1 (1 month):** Most urgent/important checkups
+  - General Practitioner Check-up
+  - Dental Care
+  
+- **Priority 2 (2 months):** Regular important checkups
+  - Gynecological Examination
+  - Prostate Examination (DRE)
+  - Mammography
+  
+- **Priority 3 (3 months):** Standard preventive checkups (DEFAULT_PRIORITY)
+  - Skin Cancer Screening
+  - HPV Test
+  - Eye Examination
+  
+- **Priority 4 (4 months):** Checkups requiring more planning
+  - Immunological Stool Test
+  - Colonoscopy
+  - PSA Test
+  - Breast Ultrasound
+  
+- **Priority 5 (5 months):** Extended/specialized checkups
+  - Extended Cardiovascular Check
+  - Osteoporosis Screening
+
+#### Priority Constants
+```javascript
+const DEFAULT_PRIORITY = 3; // Default for checkups not in priority list
+const CUSTOM_CHECKUP_BASE_PRIORITY = 3; // Starting priority for custom checkups
+```
+
+#### Staggering Logic
+- Checkups without a last date are scheduled at: `current date + priority months`
+- Custom checkups without dates are staggered: `current date + (CUSTOM_CHECKUP_BASE_PRIORITY + index) months`
+- This spreads appointments over 1-5+ months instead of scheduling all on the same day
+
+### 6.3 Calendar Event Generation
 
 #### For Current Checkups:
 1. If checkbox unchecked: Skip
 2. If insurance interval is null: Skip
 3. If "longer ago" checkbox is checked OR no date provided:
-   - Schedule: 1 month from now
+   - Schedule using priority: `current date + priority months`
+   - Priority from `checkupPriorities` or DEFAULT_PRIORITY (3 months)
    - Mark as urgent if "longer ago" checked
    - Description: Add "(überfällig - bitte zeitnah vereinbaren)" or "(erstmalig)"
 4. If last date provided:
@@ -319,7 +396,8 @@ Displays all scheduled checkups in chronological order.
 1. If last date provided:
    - Calculate: lastDate + interval months
 2. If no last date:
-   - Schedule: 1 month from now
+   - Schedule using staggered priority: `current date + (CUSTOM_CHECKUP_BASE_PRIORITY + index) months`
+   - Index ensures each custom checkup is staggered by an additional month
    - Description: Add "(erstmalig)"
 
 ---
@@ -585,6 +663,11 @@ repository-root/
 - [ ] ICS file imports into calendars correctly
 - [ ] Restart button clears all data
 - [ ] Back button works between steps
+- [ ] Checkups without dates are staggered (not all on same day)
+- [ ] Priority 1 checkups scheduled 1 month from today
+- [ ] Priority 2 checkups scheduled 2 months from today
+- [ ] Priority 3+ checkups scheduled appropriately
+- [ ] Multiple custom checkups without dates are staggered incrementally
 
 ### 14.2 UI/Visual
 - [ ] Responsive on mobile (320px width)
@@ -617,6 +700,10 @@ repository-root/
 - [ ] All checkups enabled
 - [ ] Mix of past and no dates
 - [ ] Multiple custom checkups
+- [ ] All checkups with "longer ago" checked (verify staggering)
+- [ ] All checkups without dates (verify staggering)
+- [ ] Scenario: Multiple priority 1 checkups should both be scheduled at 1 month
+- [ ] Scenario: GP Check-up (priority 1) and Skin Screening (priority 3) should be 2 months apart
 
 ---
 
