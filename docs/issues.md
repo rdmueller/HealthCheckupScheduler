@@ -276,3 +276,49 @@
 - ICS structure verified: VCALENDAR > 9x VEVENT with VALARM
 
 **Phase 7 Gesamt-Status:** ✅ Abgeschlossen
+
+---
+
+### Test-Session 8: 2026-01-04 - Phase 8 Polish & Refinement
+
+#### Phase 8.1: Responsive Design ✅
+- [x] Responsive CSS already implemented with @media (max-width: 768px)
+- [x] Mobile layout adjustments: h1 2rem, h2 1.5rem
+- [x] Container padding optimized for mobile
+- [x] Progress indicator switches to vertical layout on mobile
+- [x] Button group switches to column layout on mobile
+- [x] Full-width buttons on mobile
+
+**Note:** Responsive design was already implemented in earlier phases.
+
+#### Phase 8.2: Restart Functionality ✅
+- [x] Restart button exists and is visible
+- [x] Click Restart navigates back to Step 1
+- [x] All form fields cleared (gender, birthYear, insurance unselected)
+- [x] userData completely reset (all fields null)
+- [x] calendarEvents array emptied (length: 0)
+- [x] Weiter button correctly disabled after restart
+- [x] Console log: "Application restarted"
+
+#### Phase 8.3: Edge Cases Testing ✅
+- [x] **Age 16 (birth year 2010):** No current checkups displayed
+- [x] Message shown: "Keine aktuellen Vorsorgeuntersuchungen für Ihr Alter."
+- [x] All 9 checkups moved to "Zukünftige Vorsorgeuntersuchungen"
+- [x] Target years calculated correctly (e.g., 2028 for age 18)
+- [x] **Age 75 female (maxAge test):** Mammography correctly excluded
+- [x] Age 75: 11 checkups shown (without mammography)
+- [x] Age 65: 12 checkups shown (with mammography) - verified
+- [x] MaxAge logic working: mammography only shown for age ≤ 69
+- [x] **Insurance type variations:** GKV intervals differ from PKV
+- [x] GKV: Hausarzt Check-up every 24 months
+- [x] PKV: Hausarzt Check-up every 12 months
+- [x] "Nicht verfügbar" message for GKV checkups with null intervals
+
+**Status:** Alle Tests bestanden
+
+**Test-Szenarien:**
+1. Age 16, male, GKV: All checkups in future section
+2. Age 54, male, PKV: 9 current checkups (Phase 7 data)
+3. Age 75, female, Recommended: 11 checkups (mammography excluded)
+
+**Phase 8 Gesamt-Status:** ✅ Abgeschlossen
