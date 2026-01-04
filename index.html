@@ -266,6 +266,166 @@
       box-shadow: 0 4px 12px var(--shadow);
     }
 
+    /* Checkup Cards */
+    .checkup-section {
+      margin-bottom: 2rem;
+    }
+
+    .checkup-section h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .checkup-card {
+      background-color: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 300ms ease;
+    }
+
+    .checkup-card.disabled {
+      opacity: 0.5;
+      background-color: var(--bg);
+    }
+
+    .checkup-card.future {
+      background-color: #f5f5f5;
+    }
+
+    .checkup-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .checkup-checkbox {
+      margin-top: 0.25rem;
+    }
+
+    .checkup-checkbox input[type="checkbox"] {
+      width: 1.25rem;
+      height: 1.25rem;
+      cursor: pointer;
+    }
+
+    .checkup-info {
+      flex: 1;
+    }
+
+    .checkup-name {
+      font-weight: 600;
+      font-size: 1.125rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .checkup-description {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .checkup-interval {
+      font-size: 0.875rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .checkup-not-covered {
+      color: var(--accent);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .checkup-inputs {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .checkup-inputs input[type="date"] {
+      width: 100%;
+      padding: 0.75rem;
+      font-family: 'Karla', sans-serif;
+      font-size: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background-color: white;
+      transition: all 300ms ease;
+    }
+
+    .checkup-inputs input[type="date"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(42, 90, 74, 0.1);
+    }
+
+    .checkup-inputs input[type="date"]:disabled {
+      background-color: var(--bg);
+      cursor: not-allowed;
+    }
+
+    .longer-ago-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .longer-ago-label input[type="checkbox"] {
+      width: 1.125rem;
+      height: 1.125rem;
+      cursor: pointer;
+    }
+
+    .future-info {
+      background-color: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .target-year {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* Custom Checkups */
+    .custom-checkup-form {
+      display: grid;
+      grid-template-columns: 2fr 1fr 2fr auto;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .custom-checkup-list {
+      margin-top: 1rem;
+    }
+
+    .custom-checkup-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .custom-checkup-item button {
+      padding: 0.5rem 1rem;
+      min-height: auto;
+    }
+
     /* Buttons */
     .button-group {
       display: flex;
@@ -454,7 +614,45 @@
     <div class="step" id="step-2">
       <div class="step-content">
         <h2>Schritt 2: Vorsorgeuntersuchungen</h2>
-        <p>Konfigurieren Sie Ihre Vorsorgeuntersuchungen.</p>
+        <p>Wählen Sie Ihre Vorsorgeuntersuchungen aus und geben Sie an, wann Sie zuletzt untersucht wurden.</p>
+
+        <!-- Current Checkups -->
+        <div class="checkup-section" id="current-checkups-section">
+          <h3>Aktuelle Vorsorgeuntersuchungen</h3>
+          <div id="current-checkups-container"></div>
+        </div>
+
+        <!-- Future Checkups -->
+        <div class="checkup-section" id="future-checkups-section">
+          <h3>Zukünftige Vorsorgeuntersuchungen</h3>
+          <p style="color: var(--text-muted); font-size: 0.875rem;">
+            Diese Untersuchungen werden für Sie relevant, wenn Sie das empfohlene Alter erreichen.
+          </p>
+          <div id="future-checkups-container"></div>
+        </div>
+
+        <!-- Custom Checkups -->
+        <div class="checkup-section">
+          <h3>Eigene Untersuchungen hinzufügen</h3>
+          <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
+            Fügen Sie weitere Untersuchungen hinzu, die nicht in der Liste enthalten sind.
+          </p>
+
+          <div class="custom-checkup-form">
+            <div class="form-group" style="margin-bottom: 0;">
+              <input type="text" id="custom-name" placeholder="Name der Untersuchung" style="width: 100%;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <input type="number" id="custom-interval" placeholder="Intervall (Monate)" min="1" style="width: 100%;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <input type="date" id="custom-last-date" style="width: 100%;">
+            </div>
+            <button type="button" class="btn-primary" id="btn-add-custom">Hinzufügen</button>
+          </div>
+
+          <div id="custom-checkups-list" class="custom-checkup-list"></div>
+        </div>
       </div>
       <div class="button-group">
         <button class="btn-secondary" id="btn-back-2">Zurück</button>
@@ -703,6 +901,7 @@
       // Validate and save Step 1 data
       if (validateStep1()) {
         saveStep1Data();
+        renderCheckupsList();
         showStep(2);
       }
     }
@@ -740,6 +939,245 @@
       });
 
       return { current, future };
+    }
+
+    // ===== Rendering Functions =====
+
+    function renderCheckupsList() {
+      const { current, future } = filterCheckupsByAge();
+
+      // Initialize enabled checkups for all (default: all enabled)
+      current.forEach(checkup => {
+        if (!(checkup.id in userData.enabledCheckups)) {
+          userData.enabledCheckups[checkup.id] = true;
+        }
+      });
+      future.forEach(checkup => {
+        if (!(checkup.id in userData.enabledCheckups)) {
+          userData.enabledCheckups[checkup.id] = true;
+        }
+      });
+
+      renderCurrentCheckups(current);
+      renderFutureCheckups(future);
+      renderCustomCheckups();
+    }
+
+    function renderCurrentCheckups(checkups) {
+      const container = document.getElementById('current-checkups-container');
+      container.innerHTML = '';
+
+      if (checkups.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">Keine aktuellen Vorsorgeuntersuchungen für Ihr Alter.</p>';
+        return;
+      }
+
+      checkups.forEach(checkup => {
+        const interval = checkup.intervals[userData.insuranceType];
+        const isEnabled = userData.enabledCheckups[checkup.id];
+        const isCovered = interval !== null;
+
+        const card = document.createElement('div');
+        card.className = 'checkup-card' + (isEnabled ? '' : ' disabled');
+        card.id = `checkup-${checkup.id}`;
+
+        let intervalText = '';
+        if (isCovered) {
+          intervalText = `<span class="checkup-interval">Alle ${interval} Monate</span>`;
+        } else {
+          intervalText = `<span class="checkup-not-covered">In deinem gewählten Tarif nicht verfügbar (Selbstzahler)</span>`;
+        }
+
+        card.innerHTML = `
+          <div class="checkup-header">
+            <div class="checkup-checkbox">
+              <input type="checkbox" id="chk-${checkup.id}" ${isEnabled ? 'checked' : ''} onchange="toggleCheckupEnabled('${checkup.id}')">
+            </div>
+            <div class="checkup-info">
+              <div class="checkup-name">${checkup.name}</div>
+              <div class="checkup-description">${checkup.description}</div>
+              ${intervalText}
+            </div>
+          </div>
+          <div class="checkup-inputs">
+            <div>
+              <label for="date-${checkup.id}" style="display: block; font-size: 0.875rem; margin-bottom: 0.5rem;">
+                Letzte Untersuchung
+              </label>
+              <input
+                type="date"
+                id="date-${checkup.id}"
+                ${!isEnabled ? 'disabled' : ''}
+                max="${new Date().toISOString().split('T')[0]}"
+                onchange="saveCheckupDate('${checkup.id}')"
+              >
+            </div>
+            <label class="longer-ago-label">
+              <input
+                type="checkbox"
+                id="longer-${checkup.id}"
+                ${!isEnabled ? 'disabled' : ''}
+                onchange="toggleLongerAgo('${checkup.id}')"
+              >
+              <span>Länger her</span>
+            </label>
+          </div>
+        `;
+
+        container.appendChild(card);
+
+        // Restore saved date if exists
+        if (userData.checkups[checkup.id]) {
+          document.getElementById(`date-${checkup.id}`).value = userData.checkups[checkup.id];
+        }
+      });
+    }
+
+    function renderFutureCheckups(checkups) {
+      const container = document.getElementById('future-checkups-container');
+      const section = document.getElementById('future-checkups-section');
+
+      if (checkups.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+
+      section.style.display = 'block';
+      container.innerHTML = '';
+
+      checkups.forEach(checkup => {
+        const isEnabled = userData.enabledCheckups[checkup.id];
+        const targetYear = new Date().getFullYear() + (checkup.minAge - userData.age);
+
+        const card = document.createElement('div');
+        card.className = 'checkup-card future' + (isEnabled ? '' : ' disabled');
+        card.id = `checkup-${checkup.id}`;
+
+        card.innerHTML = `
+          <div class="checkup-header">
+            <div class="checkup-checkbox">
+              <input type="checkbox" id="chk-${checkup.id}" ${isEnabled ? 'checked' : ''} onchange="toggleCheckupEnabled('${checkup.id}')">
+            </div>
+            <div class="checkup-info">
+              <div class="checkup-name">${checkup.name}</div>
+              <div class="checkup-description">${checkup.description}</div>
+              <div class="future-info">
+                <strong>Ab ${checkup.minAge} Jahren empfohlen</strong><br>
+                Zielj ahr: <span class="target-year">${targetYear}</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function renderCustomCheckups() {
+      const container = document.getElementById('custom-checkups-list');
+      container.innerHTML = '';
+
+      if (userData.customCheckups.length === 0) {
+        return;
+      }
+
+      userData.customCheckups.forEach((checkup, index) => {
+        const item = document.createElement('div');
+        item.className = 'custom-checkup-item';
+
+        const lastDateText = checkup.lastDate
+          ? new Date(checkup.lastDate).toLocaleDateString('de-DE')
+          : 'Keine Angabe';
+
+        item.innerHTML = `
+          <div>
+            <strong>${checkup.name}</strong><br>
+            <span style="font-size: 0.875rem; color: var(--text-muted);">
+              Alle ${checkup.interval} Monate | Letzte Untersuchung: ${lastDateText}
+            </span>
+          </div>
+          <button class="btn-secondary" onclick="removeCustomCheckup(${index})">Entfernen</button>
+        `;
+
+        container.appendChild(item);
+      });
+    }
+
+    function toggleCheckupEnabled(checkupId) {
+      const isChecked = document.getElementById(`chk-${checkupId}`).checked;
+      userData.enabledCheckups[checkupId] = isChecked;
+
+      const card = document.getElementById(`checkup-${checkupId}`);
+      const dateInput = document.getElementById(`date-${checkupId}`);
+      const longerCheckbox = document.getElementById(`longer-${checkupId}`);
+
+      if (isChecked) {
+        card.classList.remove('disabled');
+        if (dateInput) dateInput.disabled = false;
+        if (longerCheckbox) longerCheckbox.disabled = false;
+      } else {
+        card.classList.add('disabled');
+        if (dateInput) dateInput.disabled = true;
+        if (longerCheckbox) longerCheckbox.disabled = true;
+      }
+    }
+
+    function toggleLongerAgo(checkupId) {
+      const longerCheckbox = document.getElementById(`longer-${checkupId}`);
+      const dateInput = document.getElementById(`date-${checkupId}`);
+
+      if (longerCheckbox.checked) {
+        dateInput.disabled = true;
+        dateInput.value = '';
+        delete userData.checkups[checkupId];
+      } else {
+        dateInput.disabled = false;
+      }
+    }
+
+    function saveCheckupDate(checkupId) {
+      const dateInput = document.getElementById(`date-${checkupId}`);
+      if (dateInput.value) {
+        userData.checkups[checkupId] = dateInput.value;
+      } else {
+        delete userData.checkups[checkupId];
+      }
+    }
+
+    function addCustomCheckup() {
+      const nameInput = document.getElementById('custom-name');
+      const intervalInput = document.getElementById('custom-interval');
+      const dateInput = document.getElementById('custom-last-date');
+
+      const name = nameInput.value.trim();
+      const interval = parseInt(intervalInput.value);
+
+      if (!name || !interval || interval < 1) {
+        alert('Bitte geben Sie Name und Intervall an.');
+        return;
+      }
+
+      const customCheckup = {
+        id: `custom-${Date.now()}`,
+        name: name,
+        interval: interval,
+        lastDate: dateInput.value || null,
+        description: 'Eigene Untersuchung'
+      };
+
+      userData.customCheckups.push(customCheckup);
+
+      // Clear inputs
+      nameInput.value = '';
+      intervalInput.value = '';
+      dateInput.value = '';
+
+      renderCustomCheckups();
+    }
+
+    function removeCustomCheckup(index) {
+      userData.customCheckups.splice(index, 1);
+      renderCustomCheckups();
     }
 
     // ===== Validation Functions =====
@@ -828,6 +1266,7 @@
       // Step 2 buttons
       document.getElementById('btn-back-2').addEventListener('click', goToStep1);
       document.getElementById('btn-next-2').addEventListener('click', goToStep3);
+      document.getElementById('btn-add-custom').addEventListener('click', addCustomCheckup);
 
       // Step 3 buttons
       document.getElementById('btn-back-3').addEventListener('click', goToStep2);

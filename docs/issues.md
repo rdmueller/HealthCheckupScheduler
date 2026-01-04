@@ -182,4 +182,33 @@
 
 **Phase 4 Gesamt-Status:** ✅ Abgeschlossen
 
+---
+
+### Test-Session 5: 2026-01-04 - Phase 5 Step 2 Checkup Configuration
+
+#### Phase 5.1-5.3: Rendering Current, Future, Custom Checkups ✅
+- [x] Step 2 Navigation: Alle 9 aktuellen Checkups werden gerendert (male, age 54, PKV)
+- [x] Alle Checkboxen initial checked
+- [x] Date Inputs vorhanden für jedes aktuelle Checkup
+- [x] "Länger her" Checkbox vorhanden
+- [x] Intervall-Anzeige korrekt (z.B. "Alle 12 Monate" für PKV)
+- [x] Custom Checkup Formular vorhanden
+**Status:** Alle Tests bestanden
+
+#### Phase 5.4: Checkup State Management ✅
+- [x] Checkbox deaktivieren: Card wird disabled, Date Input disabled, "Länger her" disabled
+- [x] Checkbox aktivieren: Card wird enabled, Inputs werden enabled
+- [x] Custom Checkup hinzufügen: "Vitamin D Test", 12 Monate → erscheint in Liste
+- [x] Custom Checkup entfernen: Button "Entfernen" funktioniert
+- [x] userData.customCheckups wird korrekt aktualisiert
+**Status:** Alle Tests bestanden
+
+**Test-Daten:**
+- User: male, 54 Jahre, PKV
+- 9 aktuelle Checkups gerendert
+- Custom: "Vitamin D Test", 12 Monate
+- Toggle: colonoscopy disabled/enabled erfolgreich
+
+**Phase 5 Gesamt-Status:** ✅ Abgeschlossen
+
 *(Weitere Tests werden während der Implementierung ergänzt)*
