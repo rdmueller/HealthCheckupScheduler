@@ -189,6 +189,83 @@
       margin-bottom: 2rem;
     }
 
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .required::after {
+      content: ' *';
+      color: var(--accent);
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      font-family: 'Karla', sans-serif;
+      font-size: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background-color: white;
+      transition: all 300ms ease;
+      min-height: 44px;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(42, 90, 74, 0.1);
+    }
+
+    /* Radio Buttons */
+    .radio-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .radio-option {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .radio-option input[type="radio"] {
+      display: none;
+    }
+
+    .radio-label {
+      display: block;
+      padding: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 300ms ease;
+      background-color: white;
+      font-weight: 600;
+    }
+
+    .radio-option input[type="radio"]:checked + .radio-label {
+      border-color: var(--primary);
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .radio-label:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
     /* Buttons */
     .button-group {
       display: flex;
@@ -325,10 +402,51 @@
       <div class="step-content">
         <h2>Schritt 1: Basisdaten</h2>
         <p>Bitte geben Sie Ihre persönlichen Informationen ein.</p>
+
+        <form id="form-basic-info">
+          <!-- Gender Selection -->
+          <div class="form-group">
+            <label class="required">Geschlecht</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="gender-male" name="gender" value="male">
+                <label for="gender-male" class="radio-label">Männlich</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="gender-female" name="gender" value="female">
+                <label for="gender-female" class="radio-label">Weiblich</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Birth Year -->
+          <div class="form-group">
+            <label for="birth-year" class="required">Geburtsjahr</label>
+            <input
+              type="number"
+              id="birth-year"
+              name="birthYear"
+              min="1920"
+              max="2024"
+              placeholder="z.B. 1972"
+            >
+          </div>
+
+          <!-- Insurance Type -->
+          <div class="form-group">
+            <label for="insurance-type" class="required">Krankenversicherung</label>
+            <select id="insurance-type" name="insuranceType">
+              <option value="">Bitte wählen...</option>
+              <option value="gkv">GKV (Gesetzlich)</option>
+              <option value="pkv">PKV (Privat)</option>
+              <option value="recommended">Empfohlen (Best Practice)</option>
+            </select>
+          </div>
+        </form>
       </div>
       <div class="button-group">
         <button class="btn-secondary" id="btn-restart">Neu starten</button>
-        <button class="btn-primary" id="btn-next-1">Weiter</button>
+        <button class="btn-primary" id="btn-next-1" disabled>Weiter</button>
       </div>
     </div>
 
@@ -425,11 +543,53 @@
     }
 
     function goToStep2() {
-      showStep(2);
+      // Validate and save Step 1 data
+      if (validateStep1()) {
+        saveStep1Data();
+        showStep(2);
+      }
     }
 
     function goToStep3() {
       showStep(3);
+    }
+
+    // ===== Validation Functions =====
+
+    function validateStep1() {
+      const gender = document.querySelector('input[name="gender"]:checked');
+      const birthYear = document.getElementById('birth-year').value;
+      const insuranceType = document.getElementById('insurance-type').value;
+
+      return !!(gender && birthYear && insuranceType);
+    }
+
+    function updateStep1Button() {
+      const btnNext = document.getElementById('btn-next-1');
+      if (validateStep1()) {
+        btnNext.disabled = false;
+      } else {
+        btnNext.disabled = true;
+      }
+    }
+
+    function saveStep1Data() {
+      // Get form values
+      const gender = document.querySelector('input[name="gender"]:checked').value;
+      const birthYear = parseInt(document.getElementById('birth-year').value);
+      const insuranceType = document.getElementById('insurance-type').value;
+
+      // Calculate age
+      const currentYear = new Date().getFullYear();
+      const age = currentYear - birthYear;
+
+      // Save to userData
+      userData.gender = gender;
+      userData.birthYear = birthYear;
+      userData.age = age;
+      userData.insuranceType = insuranceType;
+
+      console.log('Step 1 data saved:', userData);
     }
 
     function restart() {
@@ -447,6 +607,10 @@
       // Reset calendar events
       calendarEvents = [];
 
+      // Reset form
+      document.getElementById('form-basic-info').reset();
+      updateStep1Button();
+
       // Go back to step 1
       goToStep1();
 
@@ -457,6 +621,18 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
+      // Step 1 form validation
+      const genderInputs = document.querySelectorAll('input[name="gender"]');
+      const birthYearInput = document.getElementById('birth-year');
+      const insuranceTypeInput = document.getElementById('insurance-type');
+
+      genderInputs.forEach(input => {
+        input.addEventListener('change', updateStep1Button);
+      });
+
+      birthYearInput.addEventListener('input', updateStep1Button);
+      insuranceTypeInput.addEventListener('change', updateStep1Button);
+
       // Step 1 buttons
       document.getElementById('btn-next-1').addEventListener('click', goToStep2);
       document.getElementById('btn-restart').addEventListener('click', restart);

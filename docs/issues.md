@@ -119,4 +119,38 @@
 
 **Phase 2 Gesamt-Status:** ✅ Abgeschlossen
 
+---
+
+### Test-Session 3: 2026-01-04 - Phase 3 Step 1 Basic Information Form
+
+#### Phase 3.1: Form Inputs ✅
+- [x] Gender Radio Buttons vorhanden (Männlich/Weiblich)
+- [x] Birth Year Number Input vorhanden (min: 1920, max: 2024)
+- [x] Insurance Type Dropdown vorhanden (GKV/PKV/Empfohlen)
+- [x] Alle Felder mit required-Marker (*) gekennzeichnet
+- [x] "Weiter" Button initial disabled
+**Status:** Alle Tests bestanden
+
+#### Phase 3.2: Validation and Data Storage ✅
+- [x] Validation: Leeres Formular → Button bleibt disabled
+- [x] Validation: Nur Gender gewählt → Button bleibt disabled
+- [x] Validation: Alle Felder ausgefüllt → Button wird enabled
+- [x] Click "Weiter" mit vollständigem Formular → Navigation zu Step 2
+- [x] userData.gender korrekt gespeichert: "male"
+- [x] userData.birthYear korrekt gespeichert: 1972
+- [x] userData.insuranceType korrekt gespeichert: "pkv"
+- [x] userData.age korrekt berechnet: 54 (2026 - 1972)
+- [x] Restart setzt Formular zurück (alle Felder leer)
+- [x] Restart setzt userData zurück (alle Werte null)
+- [x] Restart setzt Button zurück auf disabled
+**Status:** Alle Tests bestanden
+
+**Test-Daten verwendet:**
+- Gender: male (Männlich)
+- Birth Year: 1972
+- Insurance Type: pkv (PKV - Privat)
+- Berechnetes Alter: 54 Jahre
+
+**Phase 3 Gesamt-Status:** ✅ Abgeschlossen
+
 *(Weitere Tests werden während der Implementierung ergänzt)*
