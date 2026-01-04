@@ -833,6 +833,25 @@
 
     // ===== Checkup Definitions =====
 
+    // Checkup priorities for staggered scheduling when no date is provided
+    // Lower number = higher priority (scheduled sooner)
+    const checkupPriorities = {
+      'gp-checkup': 1,           // General practitioner - highest priority
+      'dental': 1,               // Dental care - also very important
+      'gynecological': 2,        // Gynecological exam
+      'prostate-dre': 2,         // Prostate exam
+      'mammography': 2,          // Mammography
+      'skin-screening': 3,       // Skin cancer screening
+      'hpv-test': 3,             // HPV test
+      'eye-exam': 3,             // Eye exam
+      'stool-test': 4,           // Stool test
+      'colonoscopy': 4,          // Colonoscopy (takes planning)
+      'psa-test': 4,             // PSA test
+      'breast-ultrasound': 4,    // Breast ultrasound
+      'cardio-extended': 5,      // Extended cardiovascular check
+      'osteoporosis': 5          // Osteoporosis screening
+    };
+
     const checkupDefinitions = {
       male: [
         {
@@ -1067,9 +1086,10 @@
         let urgent = false;
 
         if (!lastDate || longerAgo) {
-          // Schedule 1 month from now
+          // Stagger appointments based on priority
+          const priority = checkupPriorities[checkup.id] || 3; // Default to priority 3 if not defined
           nextDate = new Date();
-          nextDate.setMonth(nextDate.getMonth() + 1);
+          nextDate.setMonth(nextDate.getMonth() + priority);
 
           if (longerAgo) {
             description += ' (überfällig - bitte zeitnah vereinbaren)';
@@ -1120,7 +1140,7 @@
       });
 
       // Process custom checkups
-      userData.customCheckups.forEach(checkup => {
+      userData.customCheckups.forEach((checkup, index) => {
         let nextDate;
         let description = checkup.description;
 
@@ -1128,8 +1148,9 @@
           nextDate = new Date(checkup.lastDate);
           nextDate.setMonth(nextDate.getMonth() + checkup.interval);
         } else {
+          // Stagger custom checkups starting from priority 3 (month 3+)
           nextDate = new Date();
-          nextDate.setMonth(nextDate.getMonth() + 1);
+          nextDate.setMonth(nextDate.getMonth() + 3 + index);
           description += ' (erstmalig)';
         }
 
