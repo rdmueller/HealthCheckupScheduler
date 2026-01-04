@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gesundheitsvorsorge Planer - Erstellen Sie Ihren persönlichen Vorsorge-Kalender">
+  <title>Gesundheitsvorsorge Planer</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    /* CSS Variables */
+    :root {
+      --primary: #2a5a4a;
+      --primary-light: #3d7a66;
+      --accent: #e8956f;
+      --bg: #faf8f5;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --card: #ffffff;
+      --border: #e0e0e0;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Base Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Typography */
+    body {
+      font-family: 'Karla', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+    }
+
+    h1, h2, h3 {
+      font-family: 'DM Serif Display', serif;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 2rem 0;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    header h1 {
+      color: white;
+    }
+
+    header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.125rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .version {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Utility Classes */
+    .hidden {
+      display: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .container {
+        padding: 1.5rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Gesundheitsvorsorge Planer</h1>
+      <p>Erstellen Sie Ihren persönlichen Vorsorge-Kalender</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Application content will go here -->
+    <p>Willkommen beim Gesundheitsvorsorge Planer</p>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>
+        <strong>Haftungsausschluss:</strong> Diese Anwendung bietet nur Orientierungshilfe.
+        Bitte konsultieren Sie Ihren Arzt oder Ihre Ärztin für individuelle medizinische Beratung.
+      </p>
+      <p class="version">Version 0.1.0</p>
+    </div>
+  </footer>
+
+  <script>
+    // Global State
+    let userData = {
+      gender: null,
+      birthYear: null,
+      age: null,
+      insuranceType: null,
+      checkups: {},
+      enabledCheckups: {},
+      customCheckups: []
+    };
+
+    let calendarEvents = [];
+
+    // Initialize
+    console.log('Gesundheitsvorsorge Planer initialisiert');
+  </script>
+</body>
+</html>
