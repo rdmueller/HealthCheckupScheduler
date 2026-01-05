@@ -429,6 +429,7 @@ SUMMARY:[checkup-name]
 DESCRIPTION:[checkup-description]
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
+RRULE:FREQ=MONTHLY;INTERVAL=[interval-in-months]
 BEGIN:VALARM
 TRIGGER:-P7D
 ACTION:DISPLAY
@@ -437,7 +438,33 @@ END:VALARM
 END:VEVENT
 ```
 
-### 7.3 Date Formatting
+### 7.3 Recurring Events (RRULE)
+
+The application generates recurring events using the RRULE (Recurrence Rule) property according to RFC 5545 standards.
+
+**Implementation:**
+- **Current checkups**: Include RRULE with monthly frequency based on the checkup's interval
+- **Future checkups**: Do NOT include RRULE (single notification events only)
+- **Custom checkups**: Include RRULE if they are current/active checkups
+
+**RRULE Format:**
+```
+RRULE:FREQ=MONTHLY;INTERVAL=X
+```
+Where X is the interval in months (e.g., 6 for dental care, 12 for annual checkups, 24 for biennial checkups)
+
+**Examples:**
+- Dental care (6 months): `RRULE:FREQ=MONTHLY;INTERVAL=6`
+- GP checkup - GKV (24 months): `RRULE:FREQ=MONTHLY;INTERVAL=24`
+- Colonoscopy - PKV (60 months): `RRULE:FREQ=MONTHLY;INTERVAL=60`
+
+**Rationale:**
+- Current checkups are ongoing preventive measures that repeat regularly
+- Future checkups are one-time notifications for when the user becomes age-eligible
+- Recurring events ensure calendar applications automatically schedule follow-up appointments
+- Users don't need to manually create new events after each checkup
+
+### 7.4 Date Formatting
 - Use VALUE=DATE for all-day events
 - Format: YYYYMMDD (e.g., 20260504)
 - Add reminder 7 days before (TRIGGER:-P7D)
@@ -633,10 +660,10 @@ repository-root/
 - Email calendar invite option
 - PDF export of checkup plan
 - Print-friendly view
-- Recurring event series in ICS
 - Family member profiles
 - Doctor contact information storage
 - Checkup completion tracking
+- End date/count limit for recurring events (currently infinite recurrence)
 
 ### 13.2 Integration Options
 - Google Calendar direct integration
@@ -661,6 +688,10 @@ repository-root/
 - [ ] Custom checkups with dates calculate correctly
 - [ ] ICS file downloads successfully
 - [ ] ICS file imports into calendars correctly
+- [ ] Current checkups have RRULE and repeat automatically in calendar
+- [ ] Future checkups do NOT have RRULE (single events only)
+- [ ] RRULE intervals match checkup intervals (e.g., 6 months for dental)
+- [ ] Recurring events display correctly in Google Calendar, Apple Calendar, Outlook
 - [ ] Restart button clears all data
 - [ ] Back button works between steps
 - [ ] Checkups without dates are staggered (not all on same day)
@@ -784,6 +815,9 @@ function restart() {...}
 ---
 
 ## Document Version
-- Version: 1.0
+- Version: 1.1
 - Last Updated: January 2026
 - Status: Complete Implementation
+- Changelog:
+  - v1.1: Added recurring events (RRULE) for current checkups
+  - v1.0: Initial implementation
