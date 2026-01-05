@@ -1218,6 +1218,12 @@
         icsContent += `DESCRIPTION:${event.description}\r\n`;
         icsContent += 'STATUS:CONFIRMED\r\n';
         icsContent += 'TRANSP:TRANSPARENT\r\n';
+
+        // Add recurrence rule for current checkups (not future ones)
+        if (!event.future && event.interval) {
+          icsContent += `RRULE:FREQ=MONTHLY;INTERVAL=${event.interval}\r\n`;
+        }
+
         icsContent += 'BEGIN:VALARM\r\n';
         icsContent += 'TRIGGER:-P7D\r\n';
         icsContent += 'ACTION:DISPLAY\r\n';
