@@ -1216,6 +1216,13 @@
         icsContent += `DTSTART;VALUE=DATE:${dtStart}\r\n`;
         icsContent += `SUMMARY:${event.name}\r\n`;
         icsContent += `DESCRIPTION:${event.description}\r\n`;
+
+        // Add recurrence rule based on interval (in months)
+        // For future checkups, don't add RRULE since they're one-time notifications
+        if (!event.future && event.interval) {
+          icsContent += `RRULE:FREQ=MONTHLY;INTERVAL=${event.interval}\r\n`;
+        }
+
         icsContent += 'STATUS:CONFIRMED\r\n';
         icsContent += 'TRANSP:TRANSPARENT\r\n';
 
