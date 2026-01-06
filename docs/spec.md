@@ -5,6 +5,7 @@
 A web-based application that helps users manage their preventive health checkups by generating personalized calendar files (.ics) based on their age, gender, insurance type, and checkup history.
 
 ### Key Features
+- Mandatory modal disclaimer on app launch (spec-driven development experiment notice)
 - Age-appropriate checkup recommendations
 - Insurance-type specific intervals (GKV/PKV/Recommended)
 - Priority-based appointment staggering (prevents scheduling all checkups on the same day)
@@ -543,7 +544,29 @@ Where X is the interval in months (e.g., 6 for dental care, 12 for annual checku
   - Light mode active: Shows moon icon, indicates "switch to dark mode"
   - Dark mode active: Shows sun icon, indicates "switch to light mode"
 
-### 8.6 Footer & Disclaimer
+### 8.6 Modal Disclaimer (Initial Launch)
+The application displays a mandatory disclaimer modal on first load that users must accept before accessing the application:
+
+**Modal Disclaimer Requirements:**
+- Appears immediately when the application loads (before any other content is accessible)
+- Blocks all interaction with the application until accepted
+- Modal overlay with semi-transparent background
+- Modal content centered on screen
+- Clear, prominent "Accept" button to proceed
+- No way to bypass or close the modal without accepting
+- Text content (German):
+  - "Dies ist ein Experiment für Spec-Driven-Development und keine echte App."
+  - "Code und Dokumentation sind von einer KI erstellt worden."
+  - "Alle Angaben müssen selbst überprüft werden."
+  - "Bitte konsultieren Sie Ihren Arzt oder Ihre Ärztin für individuelle medizinische Beratung."
+
+**Implementation Notes:**
+- Modal is shown only once per session (no persistence across sessions)
+- Modal uses z-index to appear above all other content
+- Accept button should be styled prominently (accent color)
+- Modal text should be easily readable (adequate font size and line spacing)
+
+### 8.7 Footer & Disclaimer
 The application footer includes an important disclaimer about AI-generated content:
 
 **Disclaimer (Haftungsausschluss):**
