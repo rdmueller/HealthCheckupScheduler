@@ -1733,18 +1733,18 @@
         document.querySelector('main'),
         document.querySelector('header'),
         document.querySelector('footer')
-      ];
+      ].filter(el => el !== null);
 
       // Disable interactions with main app until disclaimer is accepted
       blockedElements.forEach(el => {
-        if (el) el.style.pointerEvents = 'none';
+        el.style.pointerEvents = 'none';
       });
 
       // Handle accept button
       acceptButton.addEventListener('click', function() {
         disclaimerModal.classList.add('hidden');
         blockedElements.forEach(el => {
-          if (el) el.style.pointerEvents = 'auto';
+          el.style.pointerEvents = 'auto';
         });
       });
 
