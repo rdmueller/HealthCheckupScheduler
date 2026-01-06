@@ -590,6 +590,67 @@
       color: #78350f;
     }
 
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 1rem;
+    }
+
+    .modal-overlay.hidden {
+      display: none;
+    }
+
+    .modal-content {
+      background-color: var(--card);
+      border-radius: 12px;
+      padding: 2.5rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      animation: modalFadeIn 300ms ease;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-2rem) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-content h2 {
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .modal-content p {
+      color: var(--text);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-size: 1.125rem;
+    }
+
+    .modal-button {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+
     /* Utility Classes */
     .hidden {
       display: none;
@@ -640,6 +701,20 @@
   </style>
 </head>
 <body>
+  <!-- Disclaimer Modal -->
+  <div class="modal-overlay" id="disclaimer-modal">
+    <div class="modal-content">
+      <h2>⚠️ Haftungsausschluss</h2>
+      <p>
+        Dies ist ein Experiment für Spec-Driven-Development und keine echte App. 
+        Code und Dokumentation sind von einer KI erstellt worden.
+      </p>
+      <button class="btn-primary modal-button" id="accept-disclaimer">
+        Verstanden, fortfahren
+      </button>
+    </div>
+  </div>
+
   <header>
     <div class="container">
       <h1>Gesundheitsvorsorge Planer</h1>
@@ -1655,6 +1730,26 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
+      // Handle disclaimer modal
+      const disclaimerModal = document.getElementById('disclaimer-modal');
+      const acceptButton = document.getElementById('accept-disclaimer');
+      const mainContent = document.querySelector('main');
+      const header = document.querySelector('header');
+
+      // Show modal on load
+      disclaimerModal.classList.remove('hidden');
+
+      // Disable interactions with main app until disclaimer is accepted
+      if (mainContent) mainContent.style.pointerEvents = 'none';
+      if (header) header.style.pointerEvents = 'none';
+
+      // Handle accept button
+      acceptButton.addEventListener('click', function() {
+        disclaimerModal.classList.add('hidden');
+        if (mainContent) mainContent.style.pointerEvents = 'auto';
+        if (header) header.style.pointerEvents = 'auto';
+      });
+
       // Step 1 form validation
       const genderInputs = document.querySelectorAll('input[name="gender"]');
       const birthYearInput = document.getElementById('birth-year');
