@@ -605,10 +605,6 @@
       padding: 1rem;
     }
 
-    .modal-overlay.hidden {
-      display: none;
-    }
-
     .modal-content {
       background-color: var(--card);
       border-radius: 12px;
@@ -1733,21 +1729,23 @@
       // Handle disclaimer modal
       const disclaimerModal = document.getElementById('disclaimer-modal');
       const acceptButton = document.getElementById('accept-disclaimer');
-      const mainContent = document.querySelector('main');
-      const header = document.querySelector('header');
-      const footer = document.querySelector('footer');
+      const blockedElements = [
+        document.querySelector('main'),
+        document.querySelector('header'),
+        document.querySelector('footer')
+      ];
 
       // Disable interactions with main app until disclaimer is accepted
-      if (mainContent) mainContent.style.pointerEvents = 'none';
-      if (header) header.style.pointerEvents = 'none';
-      if (footer) footer.style.pointerEvents = 'none';
+      blockedElements.forEach(el => {
+        if (el) el.style.pointerEvents = 'none';
+      });
 
       // Handle accept button
       acceptButton.addEventListener('click', function() {
         disclaimerModal.classList.add('hidden');
-        if (mainContent) mainContent.style.pointerEvents = 'auto';
-        if (header) header.style.pointerEvents = 'auto';
-        if (footer) footer.style.pointerEvents = 'auto';
+        blockedElements.forEach(el => {
+          if (el) el.style.pointerEvents = 'auto';
+        });
       });
 
       // Step 1 form validation
