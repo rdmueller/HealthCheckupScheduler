@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
 
   <style>
-    /* CSS Variables */
+    /* CSS Variables - Light Mode (Default) */
     :root {
       --primary: #2a5a4a;
       --primary-light: #3d7a66;
@@ -23,6 +23,19 @@
       --card: #ffffff;
       --border: #e0e0e0;
       --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Dark Mode Variables */
+    [data-theme="dark"] {
+      --primary: #3d7a66;
+      --primary-light: #4d8a76;
+      --accent: #e8956f;
+      --bg: #1a1a1a;
+      --text: #e8e8e8;
+      --text-muted: #a0a0a0;
+      --card: #2a2a2a;
+      --border: #3a3a3a;
+      --shadow: rgba(0, 0, 0, 0.3);
     }
 
     /* Base Reset */
@@ -39,6 +52,7 @@
       line-height: 1.6;
       color: var(--text);
       background-color: var(--bg);
+      transition: background-color 300ms ease, color 300ms ease;
     }
 
     h1, h2, h3 {
@@ -75,6 +89,12 @@
       padding: 2rem 0;
       background-color: var(--primary);
       color: white;
+      position: relative;
+      transition: background-color 300ms ease;
+    }
+
+    header .container {
+      position: relative;
     }
 
     header h1 {
@@ -84,6 +104,40 @@
     header p {
       color: rgba(255, 255, 255, 0.9);
       font-size: 1.125rem;
+    }
+
+    /* Dark Mode Toggle Button */
+    .theme-toggle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 300ms ease;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: rotate(15deg);
+    }
+
+    .theme-toggle:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+    }
+
+    .theme-toggle:active {
+      transform: rotate(15deg) scale(0.95);
     }
 
     /* Footer */
@@ -187,6 +241,7 @@
       border-radius: 12px;
       box-shadow: 0 2px 8px var(--shadow);
       margin-bottom: 2rem;
+      transition: background-color 300ms ease, box-shadow 300ms ease;
     }
 
     /* Form Elements */
@@ -214,7 +269,8 @@
       font-size: 1rem;
       border: 2px solid var(--border);
       border-radius: 8px;
-      background-color: white;
+      background-color: var(--card);
+      color: var(--text);
       transition: all 300ms ease;
       min-height: 44px;
     }
@@ -354,7 +410,8 @@
       font-size: 1rem;
       border: 2px solid var(--border);
       border-radius: 8px;
-      background-color: white;
+      background-color: var(--card);
+      color: var(--text);
       transition: all 300ms ease;
     }
 
@@ -636,12 +693,26 @@
       button {
         width: 100%;
       }
+
+      .theme-toggle {
+        position: static;
+        margin-bottom: 1rem;
+      }
+
+      header .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="container">
+      <button class="theme-toggle" id="themeToggle" aria-label="Farbschema wechseln">
+        🌙
+      </button>
       <h1>Gesundheitsvorsorge Planer</h1>
       <p>Erstellen Sie Ihren persönlichen Vorsorge-Kalender</p>
     </div>
@@ -819,6 +890,38 @@
   </footer>
 
   <script>
+    // Dark Mode Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const htmlElement = document.documentElement;
+
+    // Check for saved theme preference (session only, not localStorage)
+    const currentTheme = sessionStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      htmlElement.setAttribute('data-theme', 'dark');
+      themeToggle.textContent = '☀️';
+      themeToggle.setAttribute('aria-label', 'Zum hellen Modus wechseln');
+    }
+
+    // Theme toggle function
+    function toggleTheme() {
+      const currentTheme = htmlElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+      htmlElement.setAttribute('data-theme', newTheme);
+      sessionStorage.setItem('theme', newTheme);
+
+      if (newTheme === 'dark') {
+        themeToggle.textContent = '☀️';
+        themeToggle.setAttribute('aria-label', 'Zum hellen Modus wechseln');
+      } else {
+        themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-label', 'Zum dunklen Modus wechseln');
+      }
+    }
+
+    // Add event listener
+    themeToggle.addEventListener('click', toggleTheme);
+
     // Global State
     let userData = {
       gender: null,

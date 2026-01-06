@@ -33,6 +33,8 @@ A web-based application that helps users manage their preventive health checkups
 - Health-themed color scheme (green primary, warm accent)
 
 ### 2.2 Color Palette
+
+#### Light Mode (Default)
 ```css
 --primary: #2a5a4a (dark green)
 --primary-light: #3d7a66
@@ -41,9 +43,32 @@ A web-based application that helps users manage their preventive health checkups
 --text: #1a1a1a
 --text-muted: #6b6b6b
 --card: #ffffff
+--border: #e0e0e0
+--shadow: rgba(0, 0, 0, 0.1)
 ```
 
-### 2.3 Typography
+#### Dark Mode
+```css
+--primary: #3d7a66 (lighter green for better contrast)
+--primary-light: #4d8a76
+--accent: #e8956f (warm orange - same as light mode)
+--bg: #1a1a1a (dark background)
+--text: #e8e8e8 (light text)
+--text-muted: #a0a0a0
+--card: #2a2a2a (dark card background)
+--border: #3a3a3a
+--shadow: rgba(0, 0, 0, 0.3)
+```
+
+### 2.3 Dark Mode Toggle
+- Toggle button positioned in the header (top-right corner on desktop, below title on mobile)
+- Icon-based toggle: Sun icon for light mode, Moon icon for dark mode
+- Smooth transition animation (300ms) when switching themes
+- Theme preference stored in sessionStorage (session-only, no persistence between browser sessions)
+- Default: Light mode
+- Accessible: Includes aria-label for screen readers
+
+### 2.4 Typography
 - Display font: 'DM Serif Display' (headings)
 - Body font: 'Karla' (all other text)
 
@@ -508,7 +533,18 @@ Where X is the interval in months (e.g., 6 for dental care, 12 for annual checku
 - Disabled states with reduced opacity
 - Transition animations (300ms ease)
 
-### 8.5 Modal Disclaimer (Initial Launch)
+### 8.5 Dark Mode Implementation
+- Toggle button in header switches between light and dark themes
+- All color variables automatically adjust when dark mode is active
+- Smooth transitions (300ms) when switching themes
+- Theme preference stored in sessionStorage (not localStorage)
+- Preference persists only during current browser session (privacy by design)
+- System preference detection not implemented (default: always light mode on fresh load)
+- Button states:
+  - Light mode active: Shows moon icon, indicates "switch to dark mode"
+  - Dark mode active: Shows sun icon, indicates "switch to light mode"
+
+### 8.6 Modal Disclaimer (Initial Launch)
 The application displays a mandatory disclaimer modal on first load that users must accept before accessing the application:
 
 **Modal Disclaimer Requirements:**
@@ -530,7 +566,7 @@ The application displays a mandatory disclaimer modal on first load that users m
 - Accept button should be styled prominently (accent color)
 - Modal text should be easily readable (adequate font size and line spacing)
 
-### 8.6 Footer & Disclaimer
+### 8.7 Footer & Disclaimer
 The application footer includes an important disclaimer about AI-generated content:
 
 **Disclaimer (Haftungsausschluss):**
@@ -722,6 +758,13 @@ repository-root/
 - [ ] Priority 2 checkups scheduled 2 months from today
 - [ ] Priority 3+ checkups scheduled appropriately
 - [ ] Multiple custom checkups without dates are staggered incrementally
+- [ ] Dark mode toggle button is visible and accessible
+- [ ] Clicking toggle switches between light and dark themes
+- [ ] Theme transition is smooth (300ms)
+- [ ] Theme preference persists within the same browser session
+- [ ] Theme preference does NOT persist after closing browser (privacy requirement)
+- [ ] Dark mode applies to all UI elements (header, cards, buttons, inputs, footer)
+- [ ] Dark mode colors provide sufficient contrast for readability
 
 ### 14.2 UI/Visual
 - [ ] Responsive on mobile (320px width)
@@ -734,6 +777,10 @@ repository-root/
 - [ ] Progress indicator updates correctly
 - [ ] Urgent checkups show red styling
 - [ ] Future checkups show yellow info box
+- [ ] Dark mode works correctly in all browsers
+- [ ] Dark mode toggle button is visible in header
+- [ ] All text remains readable in dark mode
+- [ ] All colors have sufficient contrast in dark mode
 
 ### 14.3 Browser Testing
 - [ ] Chrome (latest)
