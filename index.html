@@ -1736,9 +1736,6 @@
       const mainContent = document.querySelector('main');
       const header = document.querySelector('header');
 
-      // Show modal on load
-      disclaimerModal.classList.remove('hidden');
-
       // Disable interactions with main app until disclaimer is accepted
       if (mainContent) mainContent.style.pointerEvents = 'none';
       if (header) header.style.pointerEvents = 'none';
