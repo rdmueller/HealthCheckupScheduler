@@ -1735,16 +1735,19 @@
       const acceptButton = document.getElementById('accept-disclaimer');
       const mainContent = document.querySelector('main');
       const header = document.querySelector('header');
+      const footer = document.querySelector('footer');
 
       // Disable interactions with main app until disclaimer is accepted
       if (mainContent) mainContent.style.pointerEvents = 'none';
       if (header) header.style.pointerEvents = 'none';
+      if (footer) footer.style.pointerEvents = 'none';
 
       // Handle accept button
       acceptButton.addEventListener('click', function() {
         disclaimerModal.classList.add('hidden');
         if (mainContent) mainContent.style.pointerEvents = 'auto';
         if (header) header.style.pointerEvents = 'auto';
+        if (footer) footer.style.pointerEvents = 'auto';
       });
 
       // Step 1 form validation
