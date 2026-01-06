@@ -2,6 +2,8 @@
 
 Eine Single-Page-Anwendung zur Erstellung eines personalisierten Vorsorgekalenders für gesetzliche und private Krankenversicherungen in Deutschland.
 
+**Wichtig**: Dies ist ein Experiment für Spec-Driven-Development und keine echt App. Code und Dokumentation sind von einer KI erstellt worden.
+
 ## 🎯 Features
 
 - **3-Schritt-Wizard**: Einfache Eingabe von Basisdaten → Auswahl von Vorsorgeuntersuchungen → Kalenderübersicht
