@@ -25,6 +25,19 @@
       --shadow: rgba(0, 0, 0, 0.1);
     }
 
+    /* Dark Mode Variables */
+    [data-theme="dark"] {
+      --primary: #3d7a66;
+      --primary-light: #4a9178;
+      --accent: #f0a682;
+      --bg: #1a1a1a;
+      --text: #e5e5e5;
+      --text-muted: #a0a0a0;
+      --card: #2a2a2a;
+      --border: #404040;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
     /* Base Reset */
     * {
       margin: 0;
@@ -294,6 +307,10 @@
       background-color: #f5f5f5;
     }
 
+    [data-theme="dark"] .checkup-card.future {
+      background-color: #333333;
+    }
+
     .checkup-header {
       display: flex;
       align-items: flex-start;
@@ -391,6 +408,13 @@
       padding: 1rem;
       margin-top: 1rem;
       font-size: 0.875rem;
+      color: #856404;
+    }
+
+    [data-theme="dark"] .future-info {
+      background-color: #3a3000;
+      border-color: #d39e00;
+      color: #ffc107;
     }
 
     .target-year {
@@ -543,6 +567,10 @@
       border-left-color: #f59e0b;
     }
 
+    [data-theme="dark"] .checkup-event-card.future {
+      background-color: #3a3000;
+    }
+
     .checkup-event-header {
       display: flex;
       justify-content: space-between;
@@ -588,6 +616,47 @@
       margin-top: 0.75rem;
       font-size: 0.875rem;
       color: #78350f;
+    }
+
+    [data-theme="dark"] .future-info-box {
+      background-color: #3a3000;
+      border-color: #d39e00;
+      color: #ffc107;
+    }
+
+    /* Dark Mode Toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      background-color: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      width: 3rem;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 300ms ease;
+      box-shadow: 0 2px 8px var(--shadow);
+      padding: 0;
+      min-height: auto;
+    }
+
+    .theme-toggle:hover {
+      transform: rotate(180deg) scale(1.1);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .theme-toggle:active {
+      transform: rotate(180deg) scale(0.95);
+    }
+
+    .theme-icon {
+      font-size: 1.5rem;
+      line-height: 1;
     }
 
     /* Utility Classes */
@@ -640,6 +709,11 @@
   </style>
 </head>
 <body>
+  <!-- Dark Mode Toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Theme umschalten" title="Dark Mode umschalten">
+    <span class="theme-icon" id="theme-icon">🌙</span>
+  </button>
+
   <header>
     <div class="container">
       <h1>Gesundheitsvorsorge Planer</h1>
@@ -831,6 +905,36 @@
     };
 
     let calendarEvents = [];
+
+    // Dark Mode State (session-only, no localStorage per privacy requirements)
+    let currentTheme = 'light';
+
+    // ===== Theme Functions =====
+
+    function initializeTheme() {
+      // Check if user prefers dark mode (browser preference)
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (prefersDark) {
+        setTheme('dark');
+      }
+    }
+
+    function toggleTheme() {
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      setTheme(newTheme);
+    }
+
+    function setTheme(theme) {
+      currentTheme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+
+      const themeIcon = document.getElementById('theme-icon');
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+      }
+
+      console.log('Theme set to:', theme);
+    }
 
     // ===== Checkup Definitions =====
 
@@ -1655,6 +1759,15 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
+      // Initialize theme
+      initializeTheme();
+
+      // Theme toggle button
+      const themeToggle = document.getElementById('theme-toggle');
+      if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+      }
+
       // Step 1 form validation
       const genderInputs = document.querySelectorAll('input[name="gender"]');
       const birthYearInput = document.getElementById('birth-year');
